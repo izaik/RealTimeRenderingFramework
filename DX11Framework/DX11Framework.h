@@ -38,7 +38,8 @@ class DX11Framework
 	ComPtr<IDXGISwapChain1> _swapChain;
 	D3D11_VIEWPORT _viewport;
 
-	ComPtr<ID3D11RasterizerState> _rasterizerState;
+	ComPtr<ID3D11RasterizerState> _fillState;
+	ComPtr<ID3D11RasterizerState> _wireframeState;
 	ComPtr<ID3D11VertexShader> _vertexShader;
 	ComPtr<ID3D11InputLayout> _inputLayout;
 	ComPtr<ID3D11PixelShader> _pixelShader;
@@ -54,8 +55,12 @@ class DX11Framework
 
 	ConstantBuffer _cbData;
 
+	std::array<bool, SCANCODE_COUNT> _keys;
+
 	float simpleCount = 0;
 	float deltaTime = 0;
+
+	float userRotate = 0;
 
 public:
 	void Initialise(HINSTANCE hInstance, int nCmdShow);
@@ -68,6 +73,9 @@ public:
 	void InitPipelineVariables();
 	void InitRunTimeData();
 	void InitImGui();
+
+	void OnKeyDown(LPARAM lparam);
+	void OnKeyUp(LPARAM lparam);
 
 	~DX11Framework();
 

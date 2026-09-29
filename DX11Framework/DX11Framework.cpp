@@ -10,11 +10,11 @@ LRESULT DX11Framework::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, LPA
     switch (message)
     {
     case WM_KEYDOWN:
-        //OnKeyDown
+        DX11Framework::OnKeyDown(lParam);
         return 0;
 
     case WM_KEYUP:
-        //OnKeyUp
+        DX11Framework::OnKeyUp(lParam);
         return 0;
 
     case WM_DESTROY:
@@ -24,6 +24,38 @@ LRESULT DX11Framework::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, LPA
 
     // Handle any messages the switch statement didn't.
     return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+void DX11Framework::OnKeyDown(LPARAM lParam)
+{
+    WORD keyFlags = HIWORD(lParam);
+
+    WORD scanCode = LOBYTE(keyFlags);
+    BOOL isExtendedKey = (keyFlags & KF_EXTENDED) == KF_EXTENDED;
+
+    if (isExtendedKey)
+        scanCode = MAKEWORD(scanCode, 0xE0);
+
+    uint8_t index = LOBYTE(scanCode);
+    if (HIBYTE(scanCode)) index |= 0x80;
+
+    _keys[windows_scancode_table[index]] = true;
+}
+
+void DX11Framework::OnKeyUp(LPARAM lparam)
+{
+    WORD keyFlags = HIWORD(lparam);
+
+    WORD scanCode = LOBYTE(keyFlags);
+    BOOL isExtendedKey = (keyFlags & KF_EXTENDED) == KF_EXTENDED;
+
+    if (isExtendedKey)
+        scanCode = MAKEWORD(scanCode, 0xE0);
+
+    uint8_t index = LOBYTE(scanCode);
+    if (HIBYTE(scanCode)) index |= 0x80;
+
+    _keys[windows_scancode_table[index]] = false;
 }
 
 void DX11Framework::Initialise(HINSTANCE hInstance, int nShowCmd)
@@ -237,13 +269,20 @@ void DX11Framework::InitPipelineVariables()
     _immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     _immediateContext->IASetInputLayout(_inputLayout.Get());
 
-    //Rasterizer
+    //Rasterizer - Fill
     D3D11_RASTERIZER_DESC rasterizerDesc = {};
     rasterizerDesc.FillMode = D3D11_FILL_SOLID;
     rasterizerDesc.CullMode = D3D11_CULL_BACK;
 
-    ThrowOnFail(_device->CreateRasterizerState(&rasterizerDesc, _rasterizerState.GetAddressOf()));
-    _immediateContext->RSSetState(_rasterizerState.Get());
+    ThrowOnFail(_device->CreateRasterizerState(&rasterizerDesc, _fillState.GetAddressOf()));
+    _immediateContext->RSSetState(_fillState.Get());
+
+    //Rasterizer - Wireframe
+    D3D11_RASTERIZER_DESC wireframeDesc = {};
+    wireframeDesc.FillMode = D3D11_FILL_WIREFRAME;
+    wireframeDesc.CullMode = D3D11_CULL_NONE;
+
+    ThrowOnFail(_device->CreateRasterizerState(&wireframeDesc, _wireframeState.GetAddressOf()));
 
     //Viewport Values
     _viewport = { 0.0f, 0.0f, (float)_WindowWidth, (float)_WindowHeight, 0.0f, 1.0f };
@@ -295,7 +334,24 @@ void DX11Framework::Update()
 
     simpleCount += deltaTime;
 
-    XMStoreFloat4x4(&_World, XMMatrixIdentity() * XMMatrixRotationZ(simpleCount));
+    XMStoreFloat4x4(&_World, XMMatrixIdentity() * XMMatrixRotationZ(userRotate));
+
+    if (_keys[SCANCODE_TAB])
+    {
+        _immediateContext->RSSetState(_wireframeState.Get());
+    }
+    else
+    {
+        _immediateContext->RSSetState(_fillState.Get());
+    }
+    if (_keys[SCANCODE_RIGHT])
+    {
+        userRotate -= deltaTime;
+    }
+    if (_keys[SCANCODE_LEFT])
+    {
+        userRotate += deltaTime;
+    }
 }
 
 void DX11Framework::Draw()
@@ -347,7 +403,7 @@ void DX11Framework::SetUpUI() const
 
     ImGui::Begin("Simple Metrics");
     ImGui::Text("Time since start: %.3f", simpleCount);
-    float angle = XMConvertToDegrees(simpleCount);
+    float angle = XMConvertToDegrees(userRotate);
     ImGui::Text("Square Z rotation: %.0f°", std::fmod(angle, 360.f));
     ImGui::End();
 }
