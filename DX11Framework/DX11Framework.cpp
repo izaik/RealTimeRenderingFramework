@@ -200,10 +200,15 @@ void DX11Framework::InitVertexIndexBuffers()
     SimpleVertex VertexData[] = 
     {
         //Position                     //Color             
-        { XMFLOAT3(-1.00f,  1.00f, 0), XMFLOAT4(1.0f,  0.0f, 0.0f,  0.0f)},
-        { XMFLOAT3(1.00f,  1.00f, 0),  XMFLOAT4(0.0f,  1.0f, 0.0f,  0.0f)},
-        { XMFLOAT3(-1.00f, -1.00f, 0), XMFLOAT4(0.0f,  0.0f, 1.0f,  0.0f)},
-        { XMFLOAT3(1.00f, -1.00f, 0),  XMFLOAT4(1.0f,  1.0f, 1.0f,  0.0f)},
+        { XMFLOAT3(-1.00f,  1.00f,  -1.00f),  XMFLOAT4(1.0f,  0.0f, 0.0f,  0.0f)},
+        { XMFLOAT3( 1.00f,  1.00f,  -1.00f),  XMFLOAT4(0.0f,  0.0f, 0.0f,  0.0f)},
+        { XMFLOAT3( 1.00f, -1.00f,  -1.00f),  XMFLOAT4(0.0f,  1.0f, 0.0f,  0.0f)},
+        { XMFLOAT3(-1.00f, -1.00f,  -1.00f),  XMFLOAT4(0.0f,  0.0f, 1.0f,  0.0f)},
+        { XMFLOAT3( 1.00f,  1.00f,   1.00f),  XMFLOAT4(1.0f,  1.0f, 1.0f,  0.0f)},
+        { XMFLOAT3( 1.00f, -1.00f,   1.00f),  XMFLOAT4(1.0f,  0.0f, 0.0f,  0.0f)},
+        { XMFLOAT3(-1.00f,  1.00f,   1.00f),  XMFLOAT4(0.0f,  1.0f, 0.0f,  0.0f)},
+        { XMFLOAT3(-1.00f, -1.00f,   1.00f),  XMFLOAT4(0.0f,  0.0f, 1.0f,  0.0f)},
+        
     };
 
     D3D11_BUFFER_DESC vertexBufferDesc = {};
@@ -220,8 +225,18 @@ void DX11Framework::InitVertexIndexBuffers()
     WORD IndexData[] =
     {
         //Indices
-        0, 1, 2,
-        2, 1, 3,
+        0, 1, 2, //front
+        2, 3, 0,
+        1, 4, 5, //right
+        5, 2, 1,
+        4, 6, 7, //back
+        7, 5, 4,
+        6, 0, 7, //left
+        0, 3, 7,
+        6, 4, 1, //top
+        1, 0, 6,
+        3, 2, 5,
+        5, 7, 3
     };
 
     D3D11_BUFFER_DESC indexBufferDesc = {};
@@ -334,7 +349,7 @@ void DX11Framework::Update()
 
     simpleCount += deltaTime;
 
-    XMStoreFloat4x4(&_World, XMMatrixIdentity() * XMMatrixRotationZ(userRotate));
+    XMStoreFloat4x4(&_World, XMMatrixIdentity() * (XMMatrixRotationY(simpleCount)));
 
     if (_keys[SCANCODE_TAB])
     {
@@ -383,7 +398,7 @@ void DX11Framework::Draw()
     _immediateContext->VSSetShader(_vertexShader.Get(), nullptr, 0);
     _immediateContext->PSSetShader(_pixelShader.Get(), nullptr, 0);
 
-    _immediateContext->DrawIndexed(6, 0, 0);
+    _immediateContext->DrawIndexed(36, 0, 0);
 
     //UI renders last, as this is painted over whatver is on screen
     RenderUI();
