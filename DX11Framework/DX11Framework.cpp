@@ -349,7 +349,7 @@ void DX11Framework::Update()
 
     simpleCount += deltaTime;
 
-    XMStoreFloat4x4(&_World, XMMatrixIdentity() * (XMMatrixRotationY(simpleCount)));
+    XMStoreFloat4x4(&_World, XMMatrixIdentity() * (XMMatrixRotationY(simpleCount)) * (XMMatrixRotationX(simpleCount)));
 
     if (_keys[SCANCODE_TAB])
     {
