@@ -147,6 +147,21 @@ void DX11Framework::CreateSwapChainAndFrameBuffer()
 
     ThrowOnFail(_device->CreateRenderTargetView(frameBuffer.Get(), &framebufferDesc, _frameBufferView.GetAddressOf()));
 
+    // depth buffer
+
+    D3D11_TEXTURE2D_DESC depthTextureDesc{};
+    frameBuffer->GetDesc(&depthTextureDesc);
+
+    depthTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+    depthTextureDesc.Format = DXGI_FORMAT_R32_TYPELESS;
+
+    ComPtr<ID3D11Texture2D> texture = nullptr;
+    ThrowOnFail(_device->CreateTexture2D(&depthTextureDesc, nullptr, texture.GetAddressOf()));
+
+    D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilDesc{};
+    depthStencilDesc.Format = DXGI_FORMAT_D32_FLOAT;
+    depthStencilDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+    ThrowOnFail(_device->CreateDepthStencilView(texture.Get(), &depthStencilDesc, _depthStencilView.GetAddressOf()));
 }
 
 void DX11Framework::CompileShader(const std::wstring& fileName, const std::string& entryPoint, const std::string& profile, ComPtr<ID3DBlob>& shaderBlob) const
@@ -349,7 +364,13 @@ void DX11Framework::Update()
 
     simpleCount += deltaTime;
 
-    XMStoreFloat4x4(&_World, XMMatrixIdentity() * (XMMatrixRotationY(simpleCount)) * (XMMatrixRotationX(simpleCount)));
+    //sun
+    XMStoreFloat4x4(&_World, XMMatrixIdentity() * XMMatrixRotationY(simpleCount * 0.17f) * XMMatrixScaling(0.6f, 0.6f, 0.6f));
+    //earth
+    XMStoreFloat4x4(&_World2, XMMatrixIdentity() * XMMatrixScaling(0.3f, 0.3f, 0.3f) * XMMatrixTranslation(1.5f, 0.0f, 1.5f) * XMMatrixRotationY(simpleCount));
+    //moon
+    XMStoreFloat4x4(&_World3, XMMatrixIdentity() * XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationX(simpleCount) * XMMatrixTranslation(1.5f, 0.0f, 1.5f)
+                                                 * XMMatrixRotationY(simpleCount) * XMMatrixTranslation(0.55f, 0.0f, 0.0f));
 
     if (_keys[SCANCODE_TAB])
     {
@@ -375,7 +396,8 @@ void DX11Framework::Draw()
 
     //Present unbinds render target, so rebind and clear at start of each frame
     float backgroundColor[4] = { 0.025f, 0.025f, 0.025f, 1.0f };  
-    _immediateContext->OMSetRenderTargets(1, _frameBufferView.GetAddressOf(), 0);
+    _immediateContext->OMSetRenderTargets(1, _frameBufferView.GetAddressOf(), _depthStencilView.Get());
+    _immediateContext->ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
     _immediateContext->ClearRenderTargetView(_frameBufferView.Get(), backgroundColor);
   
     //Store this frames data in constant buffer struct
@@ -397,6 +419,22 @@ void DX11Framework::Draw()
 
     _immediateContext->VSSetShader(_vertexShader.Get(), nullptr, 0);
     _immediateContext->PSSetShader(_pixelShader.Get(), nullptr, 0);
+
+    _immediateContext->DrawIndexed(36, 0, 0);
+
+    //draw earth
+    _cbData.World = XMMatrixTranspose(XMLoadFloat4x4(&_World2));
+    _immediateContext->Map(_constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
+    memcpy(mappedSubresource.pData, &_cbData, sizeof(_cbData));
+    _immediateContext->Unmap(_constantBuffer.Get(), 0);
+
+    _immediateContext->DrawIndexed(36, 0, 0);
+
+    //draw moon
+    _cbData.World = XMMatrixTranspose(XMLoadFloat4x4(&_World3));
+    _immediateContext->Map(_constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
+    memcpy(mappedSubresource.pData, &_cbData, sizeof(_cbData));
+    _immediateContext->Unmap(_constantBuffer.Get(), 0);
 
     _immediateContext->DrawIndexed(36, 0, 0);
 

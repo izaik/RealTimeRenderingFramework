@@ -35,6 +35,7 @@ class DX11Framework
 	ComPtr<IDXGIDevice> _dxgiDevice;
 	ComPtr<IDXGIFactory2> _dxgiFactory;
 	ComPtr<ID3D11RenderTargetView> _frameBufferView;
+	ComPtr<ID3D11DepthStencilView> _depthStencilView;
 	ComPtr<IDXGISwapChain1> _swapChain;
 	D3D11_VIEWPORT _viewport;
 
@@ -50,6 +51,8 @@ class DX11Framework
 	HWND _windowHandle;
 
 	XMFLOAT4X4 _World;
+	XMFLOAT4X4 _World2;
+	XMFLOAT4X4 _World3;
 	XMFLOAT4X4 _View;
 	XMFLOAT4X4 _Projection;
 
