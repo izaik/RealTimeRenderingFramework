@@ -23,6 +23,7 @@ struct ConstantBuffer
 	XMMATRIX Projection;
 	XMMATRIX View;
 	XMMATRIX World;
+	float timeSinceStart;
 };
 
 class DX11Framework

@@ -364,6 +364,8 @@ void DX11Framework::Update()
 
     simpleCount += deltaTime;
 
+    _cbData.timeSinceStart = simpleCount;
+
     //sun
     XMStoreFloat4x4(&_World, XMMatrixIdentity() * XMMatrixRotationY(simpleCount * 0.17f) * XMMatrixScaling(0.6f, 0.6f, 0.6f));
     //earth
