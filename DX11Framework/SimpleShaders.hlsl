@@ -9,11 +9,11 @@ cbuffer ConstantBuffer : register(b0)
 struct VS_Out
 {
     float4 position : SV_POSITION;
-    float4 color : COLOR;
+    float3 normal : NORMAL;
     float3 posW : WORLD_POSITION;
 };
 
-VS_Out VS_main(float3 Position : POSITION, float4 Color : COLOR)
+VS_Out VS_main(float3 Position : POSITION, float3 Normal : NORMAL)
 {   
     VS_Out output = (VS_Out)0;
 
@@ -24,7 +24,7 @@ VS_Out VS_main(float3 Position : POSITION, float4 Color : COLOR)
     output.position = mul(output.position, View);
     output.position = mul(output.position, Projection);
     
-    output.color = Color;
+    output.normal = Normal;
     
     return output;
 }
