@@ -216,35 +216,35 @@ void DX11Framework::InitVertexIndexBuffers()
     {
         //Position                     //Normal             
         //front
-        { XMFLOAT3(-1.00f,  1.00f,  -1.00f),  XMFLOAT3(0.0f,  0.0f, -1.0f)}, 
-        { XMFLOAT3( 1.00f,  1.00f,  -1.00f),  XMFLOAT3(0.0f,  0.0f, -1.0f)}, 
-        { XMFLOAT3( 1.00f, -1.00f,  -1.00f),  XMFLOAT3(0.0f,  0.0f, -1.0f)}, 
-        { XMFLOAT3(-1.00f, -1.00f,  -1.00f),  XMFLOAT3(0.0f,  0.0f, -1.0f)}, 
+        { XMFLOAT3(-1.00f,  1.00f, -1.00f),  XMFLOAT3(0.0f,  0.0f, -1.0f)}, 
+        { XMFLOAT3( 1.00f,  1.00f, -1.00f),  XMFLOAT3(0.0f,  0.0f, -1.0f)}, 
+        { XMFLOAT3( 1.00f, -1.00f, -1.00f),  XMFLOAT3(0.0f,  0.0f, -1.0f)}, 
+        { XMFLOAT3(-1.00f, -1.00f, -1.00f),  XMFLOAT3(0.0f,  0.0f, -1.0f)}, 
         //right
-        { XMFLOAT3(1.00f,  1.00f,  -1.00f),  XMFLOAT3(1.0f,  0.0f, 0.0f)},
-        { XMFLOAT3(1.00f,  1.00f,   1.00f),  XMFLOAT3(1.0f,  0.0f, 0.0f)},
-        { XMFLOAT3(1.00f, -1.00f,   1.00f),  XMFLOAT3(1.0f,  0.0f, 0.0f)},
-        { XMFLOAT3(1.00f, -1.00f,  -1.00f),  XMFLOAT3(1.0f,  0.0f, 0.0f)},
+        { XMFLOAT3( 1.00f,  1.00f, -1.00f),  XMFLOAT3(1.0f,  0.0f, 0.0f)},
+        { XMFLOAT3( 1.00f,  1.00f,  1.00f),  XMFLOAT3(1.0f,  0.0f, 0.0f)},
+        { XMFLOAT3( 1.00f, -1.00f,  1.00f),  XMFLOAT3(1.0f,  0.0f, 0.0f)},
+        { XMFLOAT3( 1.00f, -1.00f, -1.00f),  XMFLOAT3(1.0f,  0.0f, 0.0f)},
         //back
-        { XMFLOAT3(1.00f,  1.00f,   1.00f),  XMFLOAT3(0.0f,  0.0f, 1.0f)},
-        { XMFLOAT3(-1.00f,  1.00f,   1.00f), XMFLOAT3(0.0f,  0.0f, 1.0f)},
-        { XMFLOAT3(-1.00f,  -1.00f,  1.00f), XMFLOAT3(0.0f,  0.0f, 1.0f)},
-        { XMFLOAT3(1.00f,  -1.00f,   1.00f), XMFLOAT3(0.0f,  0.0f, 1.0f)},
+        { XMFLOAT3( 1.00f,  1.00f,  1.00f),  XMFLOAT3(0.0f,  0.0f, 1.0f)},
+        { XMFLOAT3(-1.00f,  1.00f,  1.00f),  XMFLOAT3(0.0f,  0.0f, 1.0f)},
+        { XMFLOAT3(-1.00f, -1.00f,  1.00f),  XMFLOAT3(0.0f,  0.0f, 1.0f)},
+        { XMFLOAT3( 1.00f, -1.00f,  1.00f),  XMFLOAT3(0.0f,  0.0f, 1.0f)},
         //left
         { XMFLOAT3(-1.00f,  1.00f, -1.00f),  XMFLOAT3(-1.0f,  0.0f, 0.0f)},
-        { XMFLOAT3(-1.00f,  -1.00f, -1.00f), XMFLOAT3(-1.0f,  0.0f, 0.0f)},
-        { XMFLOAT3(-1.00f,  -1.00f, 1.00f),  XMFLOAT3(-1.0f,  0.0f, 0.0f)},
-        { XMFLOAT3(-1.00f,  1.00f, 1.00f),   XMFLOAT3(-1.0f,  0.0f, 0.0f)},
-        //top
+        { XMFLOAT3(-1.00f, -1.00f, -1.00f),  XMFLOAT3(-1.0f,  0.0f, 0.0f)},
+        { XMFLOAT3(-1.00f, -1.00f,  1.00f),  XMFLOAT3(-1.0f,  0.0f, 0.0f)},
+        { XMFLOAT3(-1.00f,  1.00f,  1.00f),  XMFLOAT3(-1.0f,  0.0f, 0.0f)},
+        //top                                
         { XMFLOAT3(-1.00f,  1.00f, -1.00f),  XMFLOAT3(0.0f,  1.0f, 0.0f)},
-        { XMFLOAT3(-1.00f,  1.00f, 1.00f),   XMFLOAT3(0.0f,  1.0f, 0.0f)},
-        { XMFLOAT3(1.00f,  1.00f, 1.00f),    XMFLOAT3(0.0f,  1.0f, 0.0f)},
-        { XMFLOAT3(1.00f,  1.00f, -1.00f),   XMFLOAT3(0.0f,  1.0f, 0.0f)},
-        //bottom
-        { XMFLOAT3(-1.00f,  -1.00f, 1.00f),  XMFLOAT3(0.0f,  -1.0f, 0.0f)},
-        { XMFLOAT3(-1.00f,  -1.00f, -1.00f), XMFLOAT3(0.0f,  -1.0f, 0.0f)},
-        { XMFLOAT3(1.00f,  -1.00f, -1.00f),  XMFLOAT3(0.0f,  -1.0f, 0.0f)},
-        { XMFLOAT3(1.00f,  -1.00f, 1.00f),   XMFLOAT3(0.0f,  -1.0f, 0.0f)},
+        { XMFLOAT3(-1.00f,  1.00f,  1.00f),  XMFLOAT3(0.0f,  1.0f, 0.0f)},
+        { XMFLOAT3( 1.00f,  1.00f,  1.00f),  XMFLOAT3(0.0f,  1.0f, 0.0f)},
+        { XMFLOAT3( 1.00f,  1.00f, -1.00f),  XMFLOAT3(0.0f,  1.0f, 0.0f)},
+        //bottom                             
+        { XMFLOAT3(-1.00f, -1.00f,  1.00f),  XMFLOAT3(0.0f,  -1.0f, 0.0f)},
+        { XMFLOAT3(-1.00f, -1.00f, -1.00f),  XMFLOAT3(0.0f,  -1.0f, 0.0f)},
+        { XMFLOAT3( 1.00f, -1.00f, -1.00f),  XMFLOAT3(0.0f,  -1.0f, 0.0f)},
+        { XMFLOAT3( 1.00f, -1.00f,  1.00f),  XMFLOAT3(0.0f,  -1.0f, 0.0f)},
     };
 
     D3D11_BUFFER_DESC vertexBufferDesc = {};
@@ -365,6 +365,16 @@ void DX11Framework::InitRunTimeData()
     float aspect = _viewport.Width / _viewport.Height;
     XMMATRIX perspective = XMMatrixPerspectiveFovLH(XMConvertToRadians(90), aspect, 0.01f, 100.0f);
     XMStoreFloat4x4(&_Projection, perspective);
+
+    //Materials & Lights
+    _defaultMaterial.Diffuse = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+    _defaultMaterial.Ambient = XMFLOAT4(0.2f, 0.0f, 0.0f, 1.0f);
+    _defaultMaterial.Specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+    _defaultMaterial.Shininess = float(0.1f);
+    _directionalLight.Diffuse = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
+    _directionalLight.Ambient = XMFLOAT4(0.06f, 0.06f, 0.06f, 1.0f);
+    _directionalLight.Specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+    _directionalLight.Direction = XMFLOAT3(0.0f, 0.0f, 1.0f);
 }
 
 DX11Framework::~DX11Framework()
@@ -427,6 +437,8 @@ void DX11Framework::Draw()
     _cbData.World = XMMatrixTranspose(XMLoadFloat4x4(&_World));
     _cbData.View = XMMatrixTranspose(XMLoadFloat4x4(&_View));
     _cbData.Projection = XMMatrixTranspose(XMLoadFloat4x4(&_Projection));
+    _cbData.mat = _defaultMaterial;
+    _cbData.light = _directionalLight;
 
     //Write constant buffer data onto GPU
     D3D11_MAPPED_SUBRESOURCE mappedSubresource;

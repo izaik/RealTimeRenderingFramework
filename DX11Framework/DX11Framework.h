@@ -15,7 +15,23 @@ using Microsoft::WRL::ComPtr;
 struct SimpleVertex
 {
 	XMFLOAT3 Position;
-	XMFLOAT4 Color;
+	XMFLOAT3 Normal;
+};
+
+struct Material
+{
+	XMFLOAT4 Diffuse;
+	XMFLOAT4 Ambient;
+	XMFLOAT4 Specular;
+	float Shininess;
+};
+
+struct Light
+{
+	XMFLOAT4 Diffuse;
+	XMFLOAT4 Ambient;
+	XMFLOAT4 Specular;
+	XMFLOAT3 Direction;
 };
 
 struct ConstantBuffer
@@ -23,6 +39,8 @@ struct ConstantBuffer
 	XMMATRIX Projection;
 	XMMATRIX View;
 	XMMATRIX World;
+	Material mat;
+	Light light;
 	float timeSinceStart;
 };
 
@@ -56,6 +74,8 @@ class DX11Framework
 	XMFLOAT4X4 _World3;
 	XMFLOAT4X4 _View;
 	XMFLOAT4X4 _Projection;
+	Material _defaultMaterial;
+	Light _directionalLight;
 
 	ConstantBuffer _cbData;
 
