@@ -47,16 +47,18 @@ VS_Out VS_main(float3 Position : POSITION, float3 Normal : NORMAL)
 
 float4 PS_main(VS_Out input) : SV_TARGET
 {
+    //renormalize normal after interpolation
+    float4 normal = normalize(input.normal);
+    
     //ambient lighting
     float4 ambient = light.Ambient * mat.Ambient;
-    
-    float4 normal = normalize(input.normal);
     
     //diffuse lighting
     float4 potentialDiffuse = mat.Diffuse * light.Diffuse;
     float3 lightDir = normalize(-light.Direction - input.worldPos.xyz);
     float diffuseAmount = max(dot(normal.xyz, lightDir), 0.0);
     float4 diffuse = potentialDiffuse * diffuseAmount;
+    
     //specular lighting
     float3 camDir = normalize(camPos - input.worldPos.xyz);
     float3 reflectDir = reflect(-lightDir, normal.xyz);
