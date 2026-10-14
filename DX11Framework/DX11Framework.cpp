@@ -370,14 +370,15 @@ void DX11Framework::InitRunTimeData()
     _cbData.camPos = Eye;
 
     //Materials & Lights
-    _defaultMaterial.Diffuse = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-    _defaultMaterial.Ambient = XMFLOAT4(0.1f, 0.0f, 0.0f, 1.0f);
-    _defaultMaterial.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-    _defaultMaterial.Shininess = float(32.0f);
+    _defaultMaterial.Diffuse = XMFLOAT4(0.75164f, 0.60648f, 0.22648f, 1.0f);
+    _defaultMaterial.Ambient = XMFLOAT4(0.24725f, 0.1995f, 0.0745f, 1.0f);
+    _defaultMaterial.Specular = XMFLOAT4(0.628281f, 0.555802f, 0.366065f, 1.0f);
+    _defaultMaterial.Shininess = float(52.2f);
     _directionalLight.Diffuse = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
     _directionalLight.Ambient = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
     _directionalLight.Specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-    _directionalLight.Direction = XMFLOAT3(0.0f, 0.0f, -3.0f);
+    _directionalLight.Direction = XMFLOAT3(0.0f, 0.0f, 3.0f);
+    //more material values at http://devernay.free.fr/cours/opengl/materials.html
 }
 
 DX11Framework::~DX11Framework()

@@ -10,6 +10,7 @@ cbuffer ConstantBuffer : register(b0)
         float4 Specular;
         float Shininess;
     } mat;
+    float3 camPos;
     struct Light
     {
         float4 Diffuse;
@@ -18,7 +19,6 @@ cbuffer ConstantBuffer : register(b0)
         float3 Direction;
     } light;
     float timeSinceStart;
-    float3 camPos;
 }
 
 struct VS_Out
@@ -34,9 +34,10 @@ VS_Out VS_main(float3 Position : POSITION, float3 Normal : NORMAL)
 
     float4 Pos4 = float4(Position, 1.0f);
     output.position = mul(Pos4, World);
-    float4 worldPos = output.position;
     output.position = mul(output.position, View);
     output.position = mul(output.position, Projection);
+    
+    output.worldPos = mul(Pos4, World);
     
     float3 normal = normalize(Normal);
     output.normal = mul(float4(normal, 0), World);
@@ -46,15 +47,17 @@ VS_Out VS_main(float3 Position : POSITION, float3 Normal : NORMAL)
 
 float4 PS_main(VS_Out input) : SV_TARGET
 {
+    //ambient lighting
     float4 ambient = light.Ambient * mat.Ambient;
     
     float4 normal = normalize(input.normal);
     
+    //diffuse lighting
     float4 potentialDiffuse = mat.Diffuse * light.Diffuse;
     float3 lightDir = normalize(-light.Direction - input.worldPos.xyz);
     float diffuseAmount = max(dot(normal.xyz, lightDir), 0.0);
     float4 diffuse = potentialDiffuse * diffuseAmount;
-    
+    //specular lighting
     float3 camDir = normalize(camPos - input.worldPos.xyz);
     float3 reflectDir = reflect(-lightDir, normal.xyz);
     float specularAmount = pow(max(dot(camDir, reflectDir), 0.0), mat.Shininess);

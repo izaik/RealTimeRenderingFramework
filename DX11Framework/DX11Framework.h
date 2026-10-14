@@ -40,9 +40,9 @@ struct ConstantBuffer
 	XMMATRIX View;
 	XMMATRIX World;
 	Material mat;
+	XMFLOAT3 camPos;
 	Light light;
 	float timeSinceStart;
-	XMFLOAT3 camPos;
 };
 
 class DX11Framework
