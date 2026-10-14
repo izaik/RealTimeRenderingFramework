@@ -44,10 +44,12 @@ VS_Out VS_main(float3 Position : POSITION, float3 Normal : NORMAL)
 
 float4 PS_main(VS_Out input) : SV_TARGET
 {
-    float4 diffuseAmount = dot(normalize(input.normal), light.Direction);
-    float4 diff = saturate(diffuseAmount * (mat.Diffuse * -light.Diffuse));
-  
-    float4 final = diff + mat.Ambient;
+    float4 ambient = light.Ambient * mat.Ambient;
     
-    return float4(final);
+    float diffuseAmount = dot(normalize(input.normal), light.Direction);
+    float4 diffuse = saturate(diffuseAmount * (mat.Diffuse * -light.Diffuse));
+    
+    float4 final = ambient + diffuse;
+    
+    return float4(final.rgb, 1.0f);
 }

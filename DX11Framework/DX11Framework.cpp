@@ -368,11 +368,11 @@ void DX11Framework::InitRunTimeData()
 
     //Materials & Lights
     _defaultMaterial.Diffuse = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-    _defaultMaterial.Ambient = XMFLOAT4(0.2f, 0.0f, 0.0f, 1.0f);
+    _defaultMaterial.Ambient = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
     _defaultMaterial.Specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
     _defaultMaterial.Shininess = float(0.1f);
     _directionalLight.Diffuse = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
-    _directionalLight.Ambient = XMFLOAT4(0.06f, 0.06f, 0.06f, 1.0f);
+    _directionalLight.Ambient = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
     _directionalLight.Specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
     _directionalLight.Direction = XMFLOAT3(0.0f, 0.0f, 1.0f);
 }
