@@ -366,15 +366,18 @@ void DX11Framework::InitRunTimeData()
     XMMATRIX perspective = XMMatrixPerspectiveFovLH(XMConvertToRadians(90), aspect, 0.01f, 100.0f);
     XMStoreFloat4x4(&_Projection, perspective);
 
+    //store camera position for phong
+    _cbData.camPos = Eye;
+
     //Materials & Lights
     _defaultMaterial.Diffuse = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-    _defaultMaterial.Ambient = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-    _defaultMaterial.Specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-    _defaultMaterial.Shininess = float(0.1f);
+    _defaultMaterial.Ambient = XMFLOAT4(0.1f, 0.0f, 0.0f, 1.0f);
+    _defaultMaterial.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+    _defaultMaterial.Shininess = float(32.0f);
     _directionalLight.Diffuse = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
-    _directionalLight.Ambient = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+    _directionalLight.Ambient = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
     _directionalLight.Specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-    _directionalLight.Direction = XMFLOAT3(0.0f, 0.0f, 1.0f);
+    _directionalLight.Direction = XMFLOAT3(0.0f, 0.0f, -3.0f);
 }
 
 DX11Framework::~DX11Framework()
@@ -403,7 +406,7 @@ void DX11Framework::Update()
     XMStoreFloat4x4(&_World2, XMMatrixIdentity() * XMMatrixScaling(0.3f, 0.3f, 0.3f) * XMMatrixTranslation(1.5f, 0.0f, 1.5f) * XMMatrixRotationY(simpleCount));
     //moon
     XMStoreFloat4x4(&_World3, XMMatrixIdentity() * XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationX(simpleCount) * XMMatrixTranslation(1.5f, 0.0f, 1.5f)
-                                                 * XMMatrixRotationY(simpleCount) * XMMatrixTranslation(0.55f, 0.0f, 0.0f));
+                                                * XMMatrixRotationY(simpleCount) * XMMatrixTranslation(0.55f, 0.0f, 0.0f));
 
     if (_keys[SCANCODE_TAB])
     {

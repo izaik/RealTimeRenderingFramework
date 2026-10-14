@@ -42,6 +42,7 @@ struct ConstantBuffer
 	Material mat;
 	Light light;
 	float timeSinceStart;
+	XMFLOAT3 camPos;
 };
 
 class DX11Framework

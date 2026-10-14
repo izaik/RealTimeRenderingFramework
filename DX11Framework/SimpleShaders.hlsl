@@ -7,22 +7,25 @@ cbuffer ConstantBuffer : register(b0)
     {
         float4 Diffuse;
         float4 Ambient;
+        float4 Specular;
+        float Shininess;
     } mat;
     struct Light
     {
         float4 Diffuse;
         float4 Ambient;
+        float4 Specular;
         float3 Direction;
     } light;
     float timeSinceStart;
+    float3 camPos;
 }
 
 struct VS_Out
 {
     float4 position : SV_POSITION;
-    float3 normal : NORMAL;
-    float3 color : COLOR;
-    float4 posW : WORLD_POSITION;
+    float4 normal : NORMAL;
+    float4 worldPos : WORLD_POSITION;
 };
 
 VS_Out VS_main(float3 Position : POSITION, float3 Normal : NORMAL)
@@ -31,13 +34,12 @@ VS_Out VS_main(float3 Position : POSITION, float3 Normal : NORMAL)
 
     float4 Pos4 = float4(Position, 1.0f);
     output.position = mul(Pos4, World);
-    float4 posW = output.position;
+    float4 worldPos = output.position;
     output.position = mul(output.position, View);
     output.position = mul(output.position, Projection);
     
     float3 normal = normalize(Normal);
-    normal = mul(normal, World);
-    output.normal = normal;
+    output.normal = mul(float4(normal, 0), World);
     
     return output;
 }
@@ -46,10 +48,19 @@ float4 PS_main(VS_Out input) : SV_TARGET
 {
     float4 ambient = light.Ambient * mat.Ambient;
     
-    float diffuseAmount = dot(normalize(input.normal), light.Direction);
-    float4 diffuse = saturate(diffuseAmount * (mat.Diffuse * -light.Diffuse));
+    float4 normal = normalize(input.normal);
     
-    float4 final = ambient + diffuse;
+    float4 potentialDiffuse = mat.Diffuse * light.Diffuse;
+    float3 lightDir = normalize(-light.Direction - input.worldPos.xyz);
+    float diffuseAmount = max(dot(normal.xyz, lightDir), 0.0);
+    float4 diffuse = potentialDiffuse * diffuseAmount;
     
-    return float4(final.rgb, 1.0f);
+    float3 camDir = normalize(camPos - input.worldPos.xyz);
+    float3 reflectDir = reflect(-lightDir, normal.xyz);
+    float specularAmount = pow(max(dot(camDir, reflectDir), 0.0), mat.Shininess);
+    float4 specular = light.Specular * (mat.Specular * specularAmount);
+    
+    float4 color = ambient + diffuse + specular;
+    
+    return color;
 }
