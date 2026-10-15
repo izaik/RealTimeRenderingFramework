@@ -4,6 +4,7 @@
 #include "Util.h"
 #include "IMGUI/imgui.h"
 #include "IMGUI/imgui_impl_dx11.h"
+#include "DDSTextureLoader/DDSTextureLoader.h"
 
 LRESULT DX11Framework::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 {

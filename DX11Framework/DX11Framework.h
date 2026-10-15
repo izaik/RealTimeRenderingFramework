@@ -80,6 +80,7 @@ class DX11Framework
 	Material _defaultMaterial;
 	Light _directionalLight;
 	ComPtr<ID3D11ShaderResourceView> _defaultTex;
+	ComPtr<ID3D11ShaderResourceView> _ddsTex;
 
 	ConstantBuffer _cbData;
 
