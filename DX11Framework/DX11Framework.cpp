@@ -199,6 +199,7 @@ void DX11Framework::InitShadersAndInputLayout()
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA,   0 },
         { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,   0 },
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
 
     ThrowOnFail(_device->CreateInputLayout(inputElementDesc, ARRAYSIZE(inputElementDesc), vertexShaderBlob->GetBufferPointer(), vertexShaderBlob->GetBufferSize(), _inputLayout.GetAddressOf()));
@@ -214,37 +215,37 @@ void DX11Framework::InitVertexIndexBuffers()
 {
     SimpleVertex VertexData[] = 
     {
-        //Position                     //Normal             
+        //Position                           //Normals                     //Texture Coords
         //front
-        { XMFLOAT3(-1.00f,  1.00f, -1.00f),  XMFLOAT3(0.0f,  0.0f, -1.0f)}, 
-        { XMFLOAT3( 1.00f,  1.00f, -1.00f),  XMFLOAT3(0.0f,  0.0f, -1.0f)}, 
-        { XMFLOAT3( 1.00f, -1.00f, -1.00f),  XMFLOAT3(0.0f,  0.0f, -1.0f)}, 
-        { XMFLOAT3(-1.00f, -1.00f, -1.00f),  XMFLOAT3(0.0f,  0.0f, -1.0f)}, 
+        { XMFLOAT3(-1.00f,  1.00f, -1.00f),  XMFLOAT3(0.0f,  0.0f, -1.0f), XMFLOAT2(0.0f, 1.0f)},
+        { XMFLOAT3( 1.00f,  1.00f, -1.00f),  XMFLOAT3(0.0f,  0.0f, -1.0f), XMFLOAT2(1.0f, 1.0f)},
+        { XMFLOAT3( 1.00f, -1.00f, -1.00f),  XMFLOAT3(0.0f,  0.0f, -1.0f), XMFLOAT2(1.0f, 0.0f)},
+        { XMFLOAT3(-1.00f, -1.00f, -1.00f),  XMFLOAT3(0.0f,  0.0f, -1.0f), XMFLOAT2(0.0f, 0.0f)},
         //right
-        { XMFLOAT3( 1.00f,  1.00f, -1.00f),  XMFLOAT3(1.0f,  0.0f, 0.0f)},
-        { XMFLOAT3( 1.00f,  1.00f,  1.00f),  XMFLOAT3(1.0f,  0.0f, 0.0f)},
-        { XMFLOAT3( 1.00f, -1.00f,  1.00f),  XMFLOAT3(1.0f,  0.0f, 0.0f)},
-        { XMFLOAT3( 1.00f, -1.00f, -1.00f),  XMFLOAT3(1.0f,  0.0f, 0.0f)},
+        { XMFLOAT3( 1.00f,  1.00f, -1.00f),  XMFLOAT3(1.0f,  0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f)},
+        { XMFLOAT3( 1.00f,  1.00f,  1.00f),  XMFLOAT3(1.0f,  0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f)},
+        { XMFLOAT3( 1.00f, -1.00f,  1.00f),  XMFLOAT3(1.0f,  0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f)},
+        { XMFLOAT3( 1.00f, -1.00f, -1.00f),  XMFLOAT3(1.0f,  0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f)},
         //back
-        { XMFLOAT3( 1.00f,  1.00f,  1.00f),  XMFLOAT3(0.0f,  0.0f, 1.0f)},
-        { XMFLOAT3(-1.00f,  1.00f,  1.00f),  XMFLOAT3(0.0f,  0.0f, 1.0f)},
-        { XMFLOAT3(-1.00f, -1.00f,  1.00f),  XMFLOAT3(0.0f,  0.0f, 1.0f)},
-        { XMFLOAT3( 1.00f, -1.00f,  1.00f),  XMFLOAT3(0.0f,  0.0f, 1.0f)},
+        { XMFLOAT3( 1.00f,  1.00f,  1.00f),  XMFLOAT3(0.0f,  0.0f, 1.0f), XMFLOAT2(0.0f, 1.0f)},
+        { XMFLOAT3(-1.00f,  1.00f,  1.00f),  XMFLOAT3(0.0f,  0.0f, 1.0f), XMFLOAT2(1.0f, 1.0f)},
+        { XMFLOAT3(-1.00f, -1.00f,  1.00f),  XMFLOAT3(0.0f,  0.0f, 1.0f), XMFLOAT2(1.0f, 0.0f)},
+        { XMFLOAT3( 1.00f, -1.00f,  1.00f),  XMFLOAT3(0.0f,  0.0f, 1.0f), XMFLOAT2(0.0f, 0.0f)},
         //left
-        { XMFLOAT3(-1.00f,  1.00f, -1.00f),  XMFLOAT3(-1.0f,  0.0f, 0.0f)},
-        { XMFLOAT3(-1.00f, -1.00f, -1.00f),  XMFLOAT3(-1.0f,  0.0f, 0.0f)},
-        { XMFLOAT3(-1.00f, -1.00f,  1.00f),  XMFLOAT3(-1.0f,  0.0f, 0.0f)},
-        { XMFLOAT3(-1.00f,  1.00f,  1.00f),  XMFLOAT3(-1.0f,  0.0f, 0.0f)},
+        { XMFLOAT3(-1.00f,  1.00f, -1.00f),  XMFLOAT3(-1.0f,  0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f)},
+        { XMFLOAT3(-1.00f, -1.00f, -1.00f),  XMFLOAT3(-1.0f,  0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f)},
+        { XMFLOAT3(-1.00f, -1.00f,  1.00f),  XMFLOAT3(-1.0f,  0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f)},
+        { XMFLOAT3(-1.00f,  1.00f,  1.00f),  XMFLOAT3(-1.0f,  0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f)},
         //top                                
-        { XMFLOAT3(-1.00f,  1.00f, -1.00f),  XMFLOAT3(0.0f,  1.0f, 0.0f)},
-        { XMFLOAT3(-1.00f,  1.00f,  1.00f),  XMFLOAT3(0.0f,  1.0f, 0.0f)},
-        { XMFLOAT3( 1.00f,  1.00f,  1.00f),  XMFLOAT3(0.0f,  1.0f, 0.0f)},
-        { XMFLOAT3( 1.00f,  1.00f, -1.00f),  XMFLOAT3(0.0f,  1.0f, 0.0f)},
+        { XMFLOAT3(-1.00f,  1.00f, -1.00f),  XMFLOAT3(0.0f,  1.0f, 0.0f), XMFLOAT2(0.0f, 0.0f)},
+        { XMFLOAT3(-1.00f,  1.00f,  1.00f),  XMFLOAT3(0.0f,  1.0f, 0.0f), XMFLOAT2(0.0f, 1.0f)},
+        { XMFLOAT3( 1.00f,  1.00f,  1.00f),  XMFLOAT3(0.0f,  1.0f, 0.0f), XMFLOAT2(1.0f, 1.0f)},
+        { XMFLOAT3( 1.00f,  1.00f, -1.00f),  XMFLOAT3(0.0f,  1.0f, 0.0f), XMFLOAT2(1.0f, 0.0f)},
         //bottom                             
-        { XMFLOAT3(-1.00f, -1.00f,  1.00f),  XMFLOAT3(0.0f,  -1.0f, 0.0f)},
-        { XMFLOAT3(-1.00f, -1.00f, -1.00f),  XMFLOAT3(0.0f,  -1.0f, 0.0f)},
-        { XMFLOAT3( 1.00f, -1.00f, -1.00f),  XMFLOAT3(0.0f,  -1.0f, 0.0f)},
-        { XMFLOAT3( 1.00f, -1.00f,  1.00f),  XMFLOAT3(0.0f,  -1.0f, 0.0f)},
+        { XMFLOAT3(-1.00f, -1.00f,  1.00f),  XMFLOAT3(0.0f,  -1.0f, 0.0f), XMFLOAT2(0.0f, 0.0f)},
+        { XMFLOAT3(-1.00f, -1.00f, -1.00f),  XMFLOAT3(0.0f,  -1.0f, 0.0f), XMFLOAT2(0.0f, 1.0f)},
+        { XMFLOAT3( 1.00f, -1.00f, -1.00f),  XMFLOAT3(0.0f,  -1.0f, 0.0f), XMFLOAT2(1.0f, 1.0f)},
+        { XMFLOAT3( 1.00f, -1.00f,  1.00f),  XMFLOAT3(0.0f,  -1.0f, 0.0f), XMFLOAT2(1.0f, 0.0f)},
     };
 
     D3D11_BUFFER_DESC vertexBufferDesc = {};
@@ -350,6 +351,48 @@ void DX11Framework::InitPipelineVariables()
 
     _immediateContext->VSSetConstantBuffers(0, 1, _constantBuffer.GetAddressOf());
     _immediateContext->PSSetConstantBuffers(0, 1, _constantBuffer.GetAddressOf());
+
+    //Texture Sampler Values
+    D3D11_SAMPLER_DESC samplerDesc = {};
+    samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.MipLODBias = 0;
+    samplerDesc.MaxAnisotropy = D3D11_REQ_MAXANISOTROPY;
+    samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+    samplerDesc.MinLOD = 0;
+    samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+    ThrowOnFail(_device->CreateSamplerState(&samplerDesc, _anisotropicSampler.GetAddressOf()));
+    _immediateContext->PSSetSamplers(0, 1, _anisotropicSampler.GetAddressOf());
+
+    //Basic Texture Values
+    const uint32_t pixel =
+        (255 << 24) |   //Red
+        (0 << 16) |     //Green
+        (0 << 8) |      //Blue
+        (255);          //Alpha
+
+    D3D11_TEXTURE2D_DESC textureDesc = {};
+    textureDesc.Width = 1;
+    textureDesc.Height = 1;
+    textureDesc.MipLevels = 1;
+    textureDesc.ArraySize = 1;
+    textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    textureDesc.SampleDesc.Count = 1;
+    textureDesc.Usage = D3D11_USAGE_IMMUTABLE;
+    textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+    D3D11_SUBRESOURCE_DATA initData = {};
+    initData.pSysMem = &pixel;
+    initData.SysMemPitch = sizeof(pixel);
+
+    ComPtr<ID3D11Texture2D> texture = nullptr;
+    HRESULT hr = _device->CreateTexture2D(&textureDesc, &initData, &texture);
+
+    _device->CreateShaderResourceView(texture.Get(), nullptr, _defaultTex.GetAddressOf());
+    _immediateContext->PSSetShaderResources(0, 1, _defaultTex.GetAddressOf());
 }
 
 void DX11Framework::InitRunTimeData()

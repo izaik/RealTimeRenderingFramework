@@ -16,6 +16,7 @@ struct SimpleVertex
 {
 	XMFLOAT3 Position;
 	XMFLOAT3 Normal;
+	XMFLOAT2 TexCoord;
 };
 
 struct Material
@@ -67,6 +68,7 @@ class DX11Framework
 	ComPtr<ID3D11Buffer> _constantBuffer;
 	ComPtr<ID3D11Buffer> _vertexBuffer;
 	ComPtr<ID3D11Buffer> _indexBuffer;
+	ComPtr<ID3D11SamplerState> _anisotropicSampler;
 
 	HWND _windowHandle;
 
@@ -77,6 +79,7 @@ class DX11Framework
 	XMFLOAT4X4 _Projection;
 	Material _defaultMaterial;
 	Light _directionalLight;
+	ComPtr<ID3D11ShaderResourceView> _defaultTex;
 
 	ConstantBuffer _cbData;
 

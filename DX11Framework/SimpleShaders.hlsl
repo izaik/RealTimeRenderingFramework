@@ -1,3 +1,5 @@
+Texture2D diffuseTex : register(t0);
+SamplerState anisotropicSampler : register(s0);
 cbuffer ConstantBuffer : register(b0)
 {
     float4x4 Projection;
@@ -26,9 +28,10 @@ struct VS_Out
     float4 position : SV_POSITION;
     float4 normal : NORMAL;
     float4 worldPos : WORLD_POSITION;
+    float2 texCoord : TEXCOORD;
 };
 
-VS_Out VS_main(float3 Position : POSITION, float3 Normal : NORMAL)
+VS_Out VS_main(float3 Position : POSITION, float3 Normal : NORMAL, float2 TexCoord : TEXCOORD)
 {   
     VS_Out output = (VS_Out)0;
 
@@ -42,19 +45,23 @@ VS_Out VS_main(float3 Position : POSITION, float3 Normal : NORMAL)
     float3 normal = normalize(Normal);
     output.normal = mul(float4(normal, 0), World);
     
+    output.texCoord = TexCoord;
+    
     return output;
 }
 
 float4 PS_main(VS_Out input) : SV_TARGET
 {
+    //get color from texture
+    float4 texColor = diffuseTex.Sample(anisotropicSampler, input.texCoord);
     //renormalize normal after interpolation
     float4 normal = normalize(input.normal);
     
     //ambient lighting
-    float4 ambient = light.Ambient * mat.Ambient;
+    float4 ambient = light.Ambient * texColor;
     
     //diffuse lighting
-    float4 potentialDiffuse = mat.Diffuse * light.Diffuse;
+    float4 potentialDiffuse = texColor * light.Diffuse;
     float3 lightDir = normalize(-light.Direction - input.worldPos.xyz);
     float diffuseAmount = max(dot(normal.xyz, lightDir), 0.0);
     float4 diffuse = potentialDiffuse * diffuseAmount;
