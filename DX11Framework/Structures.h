@@ -19,6 +19,15 @@ struct SimpleVertex
 	};
 };
 
+struct MeshData
+{
+	ComPtr<ID3D11Buffer> VertexBuffer;
+	ComPtr<ID3D11Buffer> IndexBuffer;
+	UINT VBStride;
+	UINT VBOffset;
+	UINT IndexCount;
+};
+
 struct Material
 {
 	XMFLOAT4 Diffuse;

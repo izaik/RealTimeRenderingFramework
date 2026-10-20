@@ -159,7 +159,6 @@
     <ClCompile Include="include\ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="include\ImGui\imgui_tables.cpp" />
     <ClCompile Include="include\ImGui\imgui_widgets.cpp" />
-    <ClCompile Include="include\OBJLoader\OBJLoader.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="OBJLoader.cpp" />
   </ItemGroup>
@@ -186,7 +185,6 @@
     <ClInclude Include="include\ImGui\imstb_rectpack.h" />
     <ClInclude Include="include\ImGui\imstb_textedit.h" />
     <ClInclude Include="include\ImGui\imstb_truetype.h" />
-    <ClInclude Include="include\OBJLoader\OBJLoader.h" />
     <ClInclude Include="OBJLoader.h" />
     <ClInclude Include="ScanCode.h" />
     <ClInclude Include="Structures.h" />

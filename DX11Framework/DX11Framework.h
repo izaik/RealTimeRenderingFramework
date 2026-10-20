@@ -63,11 +63,6 @@ class DX11Framework
 	ComPtr<ID3D11ShaderResourceView> _crateDiffuseTex;
 	ComPtr<ID3D11ShaderResourceView> _crateSpecularTex;
 
-	//load 3ds max model
-	//MeshData _3dsMaxModel = OBJLoader::Load("Models/Car/Car.obj", _device);
-	//load blender model
-	//MeshData _blenderModel = OBJLoader::Load("Models/Car/Car.obj", _device, true);
-
 	ConstantBuffer _cbData;
 
 	std::array<bool, SCANCODE_COUNT> _keys;

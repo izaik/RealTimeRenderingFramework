@@ -4,6 +4,8 @@
 #include "IMGUI/imgui.h"
 #include "IMGUI/imgui_impl_dx11.h"
 #include "DDSTextureLoader/DDSTextureLoader.cpp"
+#include "nlohmann/json.hpp"
+using json = nlohmann::json;
 
 LRESULT DX11Framework::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 {
@@ -390,11 +392,18 @@ void DX11Framework::InitRunTimeData()
     _defaultMaterial.Ambient = XMFLOAT4(0.24725f, 0.1995f, 0.0745f, 1.0f);
     _defaultMaterial.Specular = XMFLOAT4(0.628281f, 0.555802f, 0.366065f, 1.0f);
     _defaultMaterial.Shininess = float(52.2f);
-    _directionalLight.Diffuse = XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f);
-    _directionalLight.Ambient = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
-    _directionalLight.Specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-    _directionalLight.Direction = XMFLOAT3(0.0f, 0.0f, 3.0f);
     //more material values at http://devernay.free.fr/cours/opengl/materials.html
+   
+    //load light from json config
+    std::ifstream input_json(L"Lights/WhiteLight.json");
+    json j;
+    input_json >> j;
+
+    _directionalLight.Diffuse = XMFLOAT4(j["Diffuse"][0], j["Diffuse"][1], j["Diffuse"][2], j["Diffuse"][3]);
+    _directionalLight.Ambient = XMFLOAT4(j["Ambient"][0], j["Ambient"][1], j["Ambient"][2], j["Ambient"][3]);
+    _directionalLight.Specular = XMFLOAT4(j["Specular"][0], j["Specular"][1], j["Specular"][2], j["Specular"][3]);
+    _directionalLight.Direction = XMFLOAT3(j["Direction"][0], j["Direction"][1], j["Direction"][2]);
+    
 
     //load crate diffuse
     CreateDDSTextureFromFile(
@@ -497,17 +506,19 @@ void DX11Framework::Draw()
     _immediateContext->DrawIndexed(36, 0, 0);
 
     //draw loaded object
-    //_immediateContext->IASetVertexBuffers(0, 1, _3dsMaxModel.VertexBuffer.GetAddressOf(), &_3dsMaxModel.VBStride, &_3dsMaxModel.VBOffset);
-    //_immediateContext->IASetIndexBuffer(_3dsMaxModel.IndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
-    //
-    //_cbData.World = XMMatrixTranspose(XMLoadFloat4x4(&_World4));
-    //_immediateContext->Map(_constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
-    //memcpy(mappedSubresource.pData, &_cbData, sizeof(_cbData));
-    //_immediateContext->Unmap(_constantBuffer.Get(), 0);
-    //
-    //_immediateContext->DrawIndexed(_3dsMaxModel.IndexCount, 0, 0);
+    //load 3ds max model
+    MeshData _3dsMaxModel = OBJLoader::Load("Models/Car/Car.obj", _device);
+    //load blender model
+    //MeshData _blenderModel = OBJLoader::Load("Models/Car/Car.obj", _device, true);
 
+    _immediateContext->IASetVertexBuffers(0, 1, _3dsMaxModel.VertexBuffer.GetAddressOf(), &_3dsMaxModel.VBStride, &_3dsMaxModel.VBOffset);
+    _immediateContext->IASetIndexBuffer(_3dsMaxModel.IndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 
+    _immediateContext->DrawIndexed(_3dsMaxModel.IndexCount, 0, 0);
+
+    //set input assembler vertex and index buffers back to crates
+    _immediateContext->IASetVertexBuffers(0, 1, _vertexBuffer.GetAddressOf(), &stride, &offset);
+    _immediateContext->IASetIndexBuffer(_indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
     //draw earth
     _cbData.World = XMMatrixTranspose(XMLoadFloat4x4(&_World2));
     _immediateContext->Map(_constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
