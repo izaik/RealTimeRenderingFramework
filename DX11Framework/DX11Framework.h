@@ -8,6 +8,7 @@
 #include <string>
 #include <array>
 #include "ScanCode.h"
+#include "OBJLoader/OBJLoader.h"
 
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
@@ -17,6 +18,11 @@ struct SimpleVertex
 	XMFLOAT3 Position;
 	XMFLOAT3 Normal;
 	XMFLOAT2 TexCoord;
+
+	bool operator<(const SimpleVertex other) const
+	{
+		return memcmp((void*)this, (void*)&other, sizeof(SimpleVertex)) > 0;
+	};
 };
 
 struct Material
@@ -76,12 +82,19 @@ class DX11Framework
 	XMFLOAT4X4 _World;
 	XMFLOAT4X4 _World2;
 	XMFLOAT4X4 _World3;
+	XMFLOAT4X4 _World4;
 	XMFLOAT4X4 _View;
 	XMFLOAT4X4 _Projection;
 	Material _defaultMaterial;
 	Light _directionalLight;
+
 	ComPtr<ID3D11ShaderResourceView> _crateDiffuseTex;
 	ComPtr<ID3D11ShaderResourceView> _crateSpecularTex;
+
+	//load 3ds max model
+	//MeshData _3dsMaxModel = OBJLoader::Load("Models/Car/Car.obj", _device);
+	//load blender model
+	//MeshData _blenderModel = OBJLoader::Load("Models/Car/Car.obj", _device, true);
 
 	ConstantBuffer _cbData;
 

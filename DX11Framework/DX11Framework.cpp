@@ -1,5 +1,4 @@
 #include "DX11Framework.h"
-
 #include <cmath>
 #include "Util.h"
 #include "IMGUI/imgui.h"
@@ -496,6 +495,18 @@ void DX11Framework::Draw()
     _immediateContext->PSSetShader(_pixelShader.Get(), nullptr, 0);
 
     _immediateContext->DrawIndexed(36, 0, 0);
+
+    //draw loaded object
+    //_immediateContext->IASetVertexBuffers(0, 1, _3dsMaxModel.VertexBuffer.GetAddressOf(), &_3dsMaxModel.VBStride, &_3dsMaxModel.VBOffset);
+    //_immediateContext->IASetIndexBuffer(_3dsMaxModel.IndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+    //
+    //_cbData.World = XMMatrixTranspose(XMLoadFloat4x4(&_World4));
+    //_immediateContext->Map(_constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
+    //memcpy(mappedSubresource.pData, &_cbData, sizeof(_cbData));
+    //_immediateContext->Unmap(_constantBuffer.Get(), 0);
+    //
+    //_immediateContext->DrawIndexed(_3dsMaxModel.IndexCount, 0, 0);
+
 
     //draw earth
     _cbData.World = XMMatrixTranspose(XMLoadFloat4x4(&_World2));
