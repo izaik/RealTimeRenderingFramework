@@ -18,3 +18,19 @@ struct SimpleVertex
 		return memcmp((void*)this, (void*)&other, sizeof(SimpleVertex)) > 0;
 	};
 };
+
+struct Material
+{
+	XMFLOAT4 Diffuse;
+	XMFLOAT4 Ambient;
+	XMFLOAT4 Specular;
+	float Shininess;
+};
+
+struct Light
+{
+	XMFLOAT4 Diffuse;
+	XMFLOAT4 Ambient;
+	XMFLOAT4 Specular;
+	XMFLOAT3 Direction;
+};
