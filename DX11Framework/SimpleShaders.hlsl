@@ -1,4 +1,5 @@
 Texture2D diffuseTex : register(t0);
+Texture2D specularTex : register(t1);
 SamplerState anisotropicSampler : register(s0);
 cbuffer ConstantBuffer : register(b0)
 {
@@ -66,11 +67,13 @@ float4 PS_main(VS_Out input) : SV_TARGET
     float diffuseAmount = max(dot(normal.xyz, lightDir), 0.0);
     float4 diffuse = potentialDiffuse * diffuseAmount;
     
+    //get specular from texture
+    float4 texSpecular = specularTex.Sample(anisotropicSampler, input.texCoord);
     //specular lighting
     float3 camDir = normalize(camPos - input.worldPos.xyz);
     float3 reflectDir = reflect(-lightDir, normal.xyz);
     float specularAmount = pow(max(dot(camDir, reflectDir), 0.0), mat.Shininess);
-    float4 specular = light.Specular * (mat.Specular * specularAmount);
+    float4 specular = light.Specular * (texSpecular * specularAmount);
     
     float4 color = ambient + diffuse + specular;
     

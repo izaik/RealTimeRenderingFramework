@@ -46,6 +46,7 @@ struct ConstantBuffer
 	float timeSinceStart;
 };
 
+
 class DX11Framework
 {
 	int _WindowWidth = 1280;
@@ -79,8 +80,8 @@ class DX11Framework
 	XMFLOAT4X4 _Projection;
 	Material _defaultMaterial;
 	Light _directionalLight;
-	ComPtr<ID3D11ShaderResourceView> _defaultTex;
-	ComPtr<ID3D11ShaderResourceView> _ddsTex;
+	ComPtr<ID3D11ShaderResourceView> _crateDiffuseTex;
+	ComPtr<ID3D11ShaderResourceView> _crateSpecularTex;
 
 	ConstantBuffer _cbData;
 

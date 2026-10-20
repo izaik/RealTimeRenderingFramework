@@ -4,7 +4,7 @@
 #include "Util.h"
 #include "IMGUI/imgui.h"
 #include "IMGUI/imgui_impl_dx11.h"
-#include "DDSTextureLoader/DDSTextureLoader.h"
+#include "DDSTextureLoader/DDSTextureLoader.cpp"
 
 LRESULT DX11Framework::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 {
@@ -367,33 +367,6 @@ void DX11Framework::InitPipelineVariables()
 
     ThrowOnFail(_device->CreateSamplerState(&samplerDesc, _anisotropicSampler.GetAddressOf()));
     _immediateContext->PSSetSamplers(0, 1, _anisotropicSampler.GetAddressOf());
-
-    //Basic Texture Values
-    const uint32_t pixel =
-        (255 << 24) |   //Red
-        (0 << 16) |     //Green
-        (0 << 8) |      //Blue
-        (255);          //Alpha
-
-    D3D11_TEXTURE2D_DESC textureDesc = {};
-    textureDesc.Width = 1;
-    textureDesc.Height = 1;
-    textureDesc.MipLevels = 1;
-    textureDesc.ArraySize = 1;
-    textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    textureDesc.SampleDesc.Count = 1;
-    textureDesc.Usage = D3D11_USAGE_IMMUTABLE;
-    textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-
-    D3D11_SUBRESOURCE_DATA initData = {};
-    initData.pSysMem = &pixel;
-    initData.SysMemPitch = sizeof(pixel);
-
-    ComPtr<ID3D11Texture2D> texture = nullptr;
-    HRESULT hr = _device->CreateTexture2D(&textureDesc, &initData, &texture);
-
-    _device->CreateShaderResourceView(texture.Get(), nullptr, _defaultTex.GetAddressOf());
-    _immediateContext->PSSetShaderResources(0, 1, _defaultTex.GetAddressOf());
 }
 
 void DX11Framework::InitRunTimeData()
@@ -423,6 +396,25 @@ void DX11Framework::InitRunTimeData()
     _directionalLight.Specular = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
     _directionalLight.Direction = XMFLOAT3(0.0f, 0.0f, 3.0f);
     //more material values at http://devernay.free.fr/cours/opengl/materials.html
+
+    //load crate diffuse
+    CreateDDSTextureFromFile(
+        _device.Get(),
+        _immediateContext.Get(),
+        L"Textures/Crate_COLOR.dds",
+        nullptr,
+        _crateDiffuseTex.GetAddressOf()
+    );
+    _immediateContext->PSSetShaderResources(0, 1, _crateDiffuseTex.GetAddressOf());
+    //load crate specular
+    CreateDDSTextureFromFile(
+        _device.Get(),
+        _immediateContext.Get(),
+        L"Textures/Crate_SPEC.dds",
+        nullptr,
+        _crateDiffuseTex.GetAddressOf()
+    );
+    _immediateContext->PSSetShaderResources(1, 1, _crateSpecularTex.GetAddressOf());
 }
 
 DX11Framework::~DX11Framework()
