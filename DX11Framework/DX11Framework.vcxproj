@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClCompile Include="DX11Framework.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="GameObject.h" />
     <ClCompile Include="include\ImGui\imgui.cpp" />
     <ClCompile Include="include\ImGui\imgui_demo.cpp" />
     <ClCompile Include="include\ImGui\imgui_draw.cpp" />
@@ -178,7 +179,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DX11Framework.h" />
-    <ClInclude Include="GameObject.h" />
     <ClInclude Include="include\ImGui\imconfig.h" />
     <ClInclude Include="include\ImGui\imgui.h" />
     <ClInclude Include="include\ImGui\imgui_impl_dx11.h" />

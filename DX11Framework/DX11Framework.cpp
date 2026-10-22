@@ -373,7 +373,7 @@ void DX11Framework::InitPipelineVariables()
 void DX11Framework::InitRunTimeData()
 {    
     //Camera
-    XMFLOAT3 Eye = XMFLOAT3(0, 0, -3.0f);
+    XMFLOAT3 Eye = XMFLOAT3(0, 0, -10.0f);
     XMFLOAT3 At = XMFLOAT3(0, 0, 0);
     XMFLOAT3 Up = XMFLOAT3(0, 1, 0);
 
@@ -399,10 +399,10 @@ void DX11Framework::InitRunTimeData()
     json j;
     input_json >> j;
 
-    _directionalLight.Diffuse = XMFLOAT4(j["Diffuse"][0], j["Diffuse"][1], j["Diffuse"][2], j["Diffuse"][3]);
-    _directionalLight.Ambient = XMFLOAT4(j["Ambient"][0], j["Ambient"][1], j["Ambient"][2], j["Ambient"][3]);
-    _directionalLight.Specular = XMFLOAT4(j["Specular"][0], j["Specular"][1], j["Specular"][2], j["Specular"][3]);
-    _directionalLight.Direction = XMFLOAT3(j["Direction"][0], j["Direction"][1], j["Direction"][2]);
+    _loadedLight.Diffuse = XMFLOAT4(j["Diffuse"][0], j["Diffuse"][1], j["Diffuse"][2], j["Diffuse"][3]);
+    _loadedLight.Ambient = XMFLOAT4(j["Ambient"][0], j["Ambient"][1], j["Ambient"][2], j["Ambient"][3]);
+    _loadedLight.Specular = XMFLOAT4(j["Specular"][0], j["Specular"][1], j["Specular"][2], j["Specular"][3]);
+    _loadedLight.Direction = XMFLOAT3(j["Direction"][0], j["Direction"][1], j["Direction"][2]);
     
 
     //load crate diffuse
@@ -415,14 +415,16 @@ void DX11Framework::InitRunTimeData()
     );
     _immediateContext->PSSetShaderResources(0, 1, _crateDiffuseTex.GetAddressOf());
     //load crate specular
-    CreateDDSTextureFromFile(
-        _device.Get(),
-        _immediateContext.Get(),
-        L"Textures/Crate_SPEC.dds",
-        nullptr,
-        _crateDiffuseTex.GetAddressOf()
-    );
-    _immediateContext->PSSetShaderResources(1, 1, _crateSpecularTex.GetAddressOf());
+    //CreateDDSTextureFromFile(
+    //    _device.Get(),
+    //    _immediateContext.Get(),
+    //    L"Textures/Crate_SPEC.dds",
+    //    nullptr,
+    //    _crateDiffuseTex.GetAddressOf()
+    //);
+    //_immediateContext->PSSetShaderResources(1, 1, _crateSpecularTex.GetAddressOf());
+    objectTest->SetMeshData(OBJLoader::Load("Models/Car/Car.obj", _device));
+    objectTest->SetTexture(_crateDiffuseTex);
 }
 
 DX11Framework::~DX11Framework()
@@ -445,13 +447,7 @@ void DX11Framework::Update()
 
     _cbData.timeSinceStart = simpleCount;
 
-    //sun
-    XMStoreFloat4x4(&_World, XMMatrixIdentity() * XMMatrixRotationY(simpleCount * 0.17f) * XMMatrixScaling(0.6f, 0.6f, 0.6f));
-    //earth
-    XMStoreFloat4x4(&_World2, XMMatrixIdentity() * XMMatrixScaling(0.3f, 0.3f, 0.3f) * XMMatrixTranslation(1.5f, 0.0f, 1.5f) * XMMatrixRotationY(simpleCount));
-    //moon
-    XMStoreFloat4x4(&_World3, XMMatrixIdentity() * XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationX(simpleCount) * XMMatrixTranslation(1.5f, 0.0f, 1.5f)
-                                                * XMMatrixRotationY(simpleCount) * XMMatrixTranslation(0.55f, 0.0f, 0.0f));
+    objectTest->Update(deltaTime);
 
     if (_keys[SCANCODE_TAB])
     {
@@ -460,14 +456,6 @@ void DX11Framework::Update()
     else
     {
         _immediateContext->RSSetState(_fillState.Get());
-    }
-    if (_keys[SCANCODE_RIGHT])
-    {
-        userRotate -= deltaTime;
-    }
-    if (_keys[SCANCODE_LEFT])
-    {
-        userRotate += deltaTime;
     }
 }
 
@@ -486,7 +474,7 @@ void DX11Framework::Draw()
     _cbData.View = XMMatrixTranspose(XMLoadFloat4x4(&_View));
     _cbData.Projection = XMMatrixTranspose(XMLoadFloat4x4(&_Projection));
     _cbData.mat = _defaultMaterial;
-    _cbData.light = _directionalLight;
+    _cbData.light = _loadedLight;
 
     //Write constant buffer data onto GPU
     D3D11_MAPPED_SUBRESOURCE mappedSubresource;
@@ -494,46 +482,23 @@ void DX11Framework::Draw()
     memcpy(mappedSubresource.pData, &_cbData, sizeof(_cbData));
     _immediateContext->Unmap(_constantBuffer.Get(), 0);
 
-    //Set object variables and draw
-    UINT stride = {sizeof(SimpleVertex)};
-    UINT offset =  0 ;
-    _immediateContext->IASetVertexBuffers(0, 1, _vertexBuffer.GetAddressOf(), &stride, &offset);
-    _immediateContext->IASetIndexBuffer(_indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 
     _immediateContext->VSSetShader(_vertexShader.Get(), nullptr, 0);
     _immediateContext->PSSetShader(_pixelShader.Get(), nullptr, 0);
 
-    _immediateContext->DrawIndexed(36, 0, 0);
-
     //draw loaded object
     //load 3ds max model
-    MeshData _3dsMaxModel = OBJLoader::Load("Models/Car/Car.obj", _device);
+
+    //MeshData _3dsMaxModel = OBJLoader::Load("Models/Car/Car.obj", _device);
     //load blender model
     //MeshData _blenderModel = OBJLoader::Load("Models/Car/Car.obj", _device, true);
 
-    _immediateContext->IASetVertexBuffers(0, 1, _3dsMaxModel.VertexBuffer.GetAddressOf(), &_3dsMaxModel.VBStride, &_3dsMaxModel.VBOffset);
-    _immediateContext->IASetIndexBuffer(_3dsMaxModel.IndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+    //_immediateContext->IASetVertexBuffers(0, 1, _3dsMaxModel.VertexBuffer.GetAddressOf(), &_3dsMaxModel.VBStride, &_3dsMaxModel.VBOffset);
+    //_immediateContext->IASetIndexBuffer(_3dsMaxModel.IndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 
-    _immediateContext->DrawIndexed(_3dsMaxModel.IndexCount, 0, 0);
+    //_immediateContext->DrawIndexed(_3dsMaxModel.IndexCount, 0, 0);
 
-    //set input assembler vertex and index buffers back to crates
-    _immediateContext->IASetVertexBuffers(0, 1, _vertexBuffer.GetAddressOf(), &stride, &offset);
-    _immediateContext->IASetIndexBuffer(_indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
-    //draw earth
-    _cbData.World = XMMatrixTranspose(XMLoadFloat4x4(&_World2));
-    _immediateContext->Map(_constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
-    memcpy(mappedSubresource.pData, &_cbData, sizeof(_cbData));
-    _immediateContext->Unmap(_constantBuffer.Get(), 0);
-
-    _immediateContext->DrawIndexed(36, 0, 0);
-
-    //draw moon
-    _cbData.World = XMMatrixTranspose(XMLoadFloat4x4(&_World3));
-    _immediateContext->Map(_constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
-    memcpy(mappedSubresource.pData, &_cbData, sizeof(_cbData));
-    _immediateContext->Unmap(_constantBuffer.Get(), 0);
-
-    _immediateContext->DrawIndexed(36, 0, 0);
+    objectTest->Draw(_immediateContext);
 
     //UI renders last, as this is painted over whatver is on screen
     RenderUI();

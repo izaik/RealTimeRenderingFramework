@@ -10,6 +10,7 @@
 #include "ScanCode.h"
 #include "OBJLoader.h"
 #include "Structures.h"
+#include "GameObject.h"
 
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
@@ -52,16 +53,14 @@ class DX11Framework
 	HWND _windowHandle;
 
 	XMFLOAT4X4 _World;
-	XMFLOAT4X4 _World2;
-	XMFLOAT4X4 _World3;
-	XMFLOAT4X4 _World4;
 	XMFLOAT4X4 _View;
 	XMFLOAT4X4 _Projection;
 	Material _defaultMaterial;
-	Light _directionalLight;
+	Light _loadedLight;
 
+	
 	ComPtr<ID3D11ShaderResourceView> _crateDiffuseTex;
-	ComPtr<ID3D11ShaderResourceView> _crateSpecularTex;
+	GameObject* objectTest = new GameObject(_World);
 
 	ConstantBuffer _cbData;
 

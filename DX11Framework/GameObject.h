@@ -12,8 +12,10 @@ class GameObject
 	MeshData _Mesh;
 
 public:
+	GameObject(DirectX::XMFLOAT4X4 world);
+
 	void SetTexture(ComPtr<ID3D11ShaderResourceView> in) { _Texture = in; }
-	ComPtr<ID3D11ShaderResourceView> & GetTexture() { return _Texture; }
+	ComPtr<ID3D11ShaderResourceView>& GetTexture() { return _Texture; }
 
 	void SetMeshData(MeshData in) { _Mesh = in; }
 	MeshData* GetData() { return &_Mesh; }
@@ -22,3 +24,4 @@ public:
 
 	void Update(float deltaTime);
 };
+
