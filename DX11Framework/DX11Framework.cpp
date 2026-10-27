@@ -413,7 +413,6 @@ void DX11Framework::InitRunTimeData()
         nullptr,
         _crateDiffuseTex.GetAddressOf()
     );
-    _immediateContext->PSSetShaderResources(0, 1, _crateDiffuseTex.GetAddressOf());
     //load crate specular
     CreateDDSTextureFromFile(
         _device.Get(),
@@ -422,9 +421,10 @@ void DX11Framework::InitRunTimeData()
         nullptr,
         _crateSpecularTex.GetAddressOf()
     );
-    _immediateContext->PSSetShaderResources(1, 1, _crateSpecularTex.GetAddressOf());
+
     objectTest->SetMeshData(OBJLoader::Load("Models/Airplane/Hercules.obj", _device));
-    objectTest->SetTexture(_crateDiffuseTex);
+    objectTest->SetDiffuse(_crateDiffuseTex, _immediateContext);
+    objectTest->SetSpecular(_crateSpecularTex, _immediateContext);
 }
 
 DX11Framework::~DX11Framework()
@@ -447,7 +447,7 @@ void DX11Framework::Update()
 
     _cbData.timeSinceStart = simpleCount;
 
-    objectTest->Update(deltaTime);
+    objectTest->Update(_cbData.timeSinceStart);
 
     if (_keys[SCANCODE_TAB])
     {
@@ -482,21 +482,8 @@ void DX11Framework::Draw()
     memcpy(mappedSubresource.pData, &_cbData, sizeof(_cbData));
     _immediateContext->Unmap(_constantBuffer.Get(), 0);
 
-
     _immediateContext->VSSetShader(_vertexShader.Get(), nullptr, 0);
     _immediateContext->PSSetShader(_pixelShader.Get(), nullptr, 0);
-
-    //draw loaded object
-    //load 3ds max model
-
-    //MeshData _3dsMaxModel = OBJLoader::Load("Models/Car/Car.obj", _device);
-    //load blender model
-    //MeshData _blenderModel = OBJLoader::Load("Models/Car/Car.obj", _device, true);
-
-    //_immediateContext->IASetVertexBuffers(0, 1, _3dsMaxModel.VertexBuffer.GetAddressOf(), &_3dsMaxModel.VBStride, &_3dsMaxModel.VBOffset);
-    //_immediateContext->IASetIndexBuffer(_3dsMaxModel.IndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
-
-    //_immediateContext->DrawIndexed(_3dsMaxModel.IndexCount, 0, 0);
 
     objectTest->Draw(_cbData, _immediateContext, _constantBuffer, mappedSubresource);
 
