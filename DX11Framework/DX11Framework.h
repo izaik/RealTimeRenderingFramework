@@ -60,6 +60,8 @@ class DX11Framework
 
 	
 	ComPtr<ID3D11ShaderResourceView> _crateDiffuseTex;
+	ComPtr<ID3D11ShaderResourceView> _crateSpecularTex;
+	
 	GameObject* objectTest = new GameObject(_World);
 
 	ConstantBuffer _cbData;

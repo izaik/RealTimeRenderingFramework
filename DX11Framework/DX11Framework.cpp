@@ -373,7 +373,7 @@ void DX11Framework::InitPipelineVariables()
 void DX11Framework::InitRunTimeData()
 {    
     //Camera
-    XMFLOAT3 Eye = XMFLOAT3(0, 0, -10.0f);
+    XMFLOAT3 Eye = XMFLOAT3(0, 0, -3.0f);
     XMFLOAT3 At = XMFLOAT3(0, 0, 0);
     XMFLOAT3 Up = XMFLOAT3(0, 1, 0);
 
@@ -415,15 +415,15 @@ void DX11Framework::InitRunTimeData()
     );
     _immediateContext->PSSetShaderResources(0, 1, _crateDiffuseTex.GetAddressOf());
     //load crate specular
-    //CreateDDSTextureFromFile(
-    //    _device.Get(),
-    //    _immediateContext.Get(),
-    //    L"Textures/Crate_SPEC.dds",
-    //    nullptr,
-    //    _crateDiffuseTex.GetAddressOf()
-    //);
-    //_immediateContext->PSSetShaderResources(1, 1, _crateSpecularTex.GetAddressOf());
-    objectTest->SetMeshData(OBJLoader::Load("Models/Car/Car.obj", _device));
+    CreateDDSTextureFromFile(
+        _device.Get(),
+        _immediateContext.Get(),
+        L"Textures/Crate_SPEC.dds",
+        nullptr,
+        _crateSpecularTex.GetAddressOf()
+    );
+    _immediateContext->PSSetShaderResources(1, 1, _crateSpecularTex.GetAddressOf());
+    objectTest->SetMeshData(OBJLoader::Load("Models/Airplane/Hercules.obj", _device));
     objectTest->SetTexture(_crateDiffuseTex);
 }
 
