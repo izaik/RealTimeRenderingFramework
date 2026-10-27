@@ -15,17 +15,6 @@
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
-struct ConstantBuffer
-{
-	XMMATRIX Projection;
-	XMMATRIX View;
-	XMMATRIX World;
-	Material mat;
-	XMFLOAT3 camPos;
-	Light light;
-	float timeSinceStart;
-};
-
 class DX11Framework
 {
 	int _WindowWidth = 1280;

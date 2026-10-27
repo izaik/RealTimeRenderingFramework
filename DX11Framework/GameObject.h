@@ -20,8 +20,11 @@ public:
 	void SetMeshData(MeshData in) { _Mesh = in; }
 	MeshData* GetData() { return &_Mesh; }
 
-	void Draw(ComPtr<ID3D11DeviceContext> context);
+	void Draw(
+		ConstantBuffer cbData,
+		ComPtr<ID3D11DeviceContext> context,
+		ComPtr<ID3D11Buffer> constantBuffer,
+		D3D11_MAPPED_SUBRESOURCE mappedSubresource);
 
 	void Update(float deltaTime);
 };
-

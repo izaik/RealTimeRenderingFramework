@@ -373,7 +373,7 @@ void DX11Framework::InitPipelineVariables()
 void DX11Framework::InitRunTimeData()
 {    
     //Camera
-    XMFLOAT3 Eye = XMFLOAT3(0, 0, -3.0f);
+    XMFLOAT3 Eye = XMFLOAT3(0, 0, -10.0f);
     XMFLOAT3 At = XMFLOAT3(0, 0, 0);
     XMFLOAT3 Up = XMFLOAT3(0, 1, 0);
 
@@ -498,7 +498,7 @@ void DX11Framework::Draw()
 
     //_immediateContext->DrawIndexed(_3dsMaxModel.IndexCount, 0, 0);
 
-    objectTest->Draw(_immediateContext);
+    objectTest->Draw(_cbData, _immediateContext, _constantBuffer, mappedSubresource);
 
     //UI renders last, as this is painted over whatver is on screen
     RenderUI();
