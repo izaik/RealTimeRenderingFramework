@@ -69,7 +69,6 @@ public:
 	void CreateSwapChainAndFrameBuffer();
 	void CompileShader(const std::wstring& fileName, const std::string& entryPoint, const std::string& profile, ComPtr<ID3DBlob>& shaderBlob) const;
 	void InitShadersAndInputLayout();
-	void InitVertexIndexBuffers();
 	void InitPipelineVariables();
 	void InitRunTimeData();
 	void InitImGui();

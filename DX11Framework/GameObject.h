@@ -5,11 +5,6 @@
 
 using Microsoft::WRL::ComPtr;
 
-enum TextureType {
-	DIFFUSE,
-	SPECULAR,
-};
-
 class GameObject
 {
 	DirectX::XMFLOAT4X4 World;

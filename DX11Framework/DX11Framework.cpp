@@ -66,7 +66,6 @@ void DX11Framework::Initialise(HINSTANCE hInstance, int nShowCmd)
     CreateD3DDevice();
     CreateSwapChainAndFrameBuffer();
     InitShadersAndInputLayout();
-    InitVertexIndexBuffers();
     InitImGui();
     InitPipelineVariables();
     InitRunTimeData();
@@ -211,81 +210,6 @@ void DX11Framework::InitShadersAndInputLayout()
     CompileShader(L"SimpleShaders.hlsl", "PS_main", "ps_5_0", pixelShaderBlob);
 
     ThrowOnFail(_device->CreatePixelShader(pixelShaderBlob->GetBufferPointer(), pixelShaderBlob->GetBufferSize(), nullptr, _pixelShader.GetAddressOf()));
-}
-
-void DX11Framework::InitVertexIndexBuffers()
-{
-    SimpleVertex VertexData[] = 
-    {
-        //Position                           //Normals                     //Texture Coords
-        //front
-        { XMFLOAT3(-1.00f,  1.00f, -1.00f),  XMFLOAT3(0.0f,  0.0f, -1.0f), XMFLOAT2(0.0f, 1.0f)},
-        { XMFLOAT3( 1.00f,  1.00f, -1.00f),  XMFLOAT3(0.0f,  0.0f, -1.0f), XMFLOAT2(1.0f, 1.0f)},
-        { XMFLOAT3( 1.00f, -1.00f, -1.00f),  XMFLOAT3(0.0f,  0.0f, -1.0f), XMFLOAT2(1.0f, 0.0f)},
-        { XMFLOAT3(-1.00f, -1.00f, -1.00f),  XMFLOAT3(0.0f,  0.0f, -1.0f), XMFLOAT2(0.0f, 0.0f)},
-        //right
-        { XMFLOAT3( 1.00f,  1.00f, -1.00f),  XMFLOAT3(1.0f,  0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f)},
-        { XMFLOAT3( 1.00f,  1.00f,  1.00f),  XMFLOAT3(1.0f,  0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f)},
-        { XMFLOAT3( 1.00f, -1.00f,  1.00f),  XMFLOAT3(1.0f,  0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f)},
-        { XMFLOAT3( 1.00f, -1.00f, -1.00f),  XMFLOAT3(1.0f,  0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f)},
-        //back
-        { XMFLOAT3( 1.00f,  1.00f,  1.00f),  XMFLOAT3(0.0f,  0.0f, 1.0f), XMFLOAT2(0.0f, 1.0f)},
-        { XMFLOAT3(-1.00f,  1.00f,  1.00f),  XMFLOAT3(0.0f,  0.0f, 1.0f), XMFLOAT2(1.0f, 1.0f)},
-        { XMFLOAT3(-1.00f, -1.00f,  1.00f),  XMFLOAT3(0.0f,  0.0f, 1.0f), XMFLOAT2(1.0f, 0.0f)},
-        { XMFLOAT3( 1.00f, -1.00f,  1.00f),  XMFLOAT3(0.0f,  0.0f, 1.0f), XMFLOAT2(0.0f, 0.0f)},
-        //left
-        { XMFLOAT3(-1.00f,  1.00f, -1.00f),  XMFLOAT3(-1.0f,  0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f)},
-        { XMFLOAT3(-1.00f, -1.00f, -1.00f),  XMFLOAT3(-1.0f,  0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f)},
-        { XMFLOAT3(-1.00f, -1.00f,  1.00f),  XMFLOAT3(-1.0f,  0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f)},
-        { XMFLOAT3(-1.00f,  1.00f,  1.00f),  XMFLOAT3(-1.0f,  0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f)},
-        //top                                
-        { XMFLOAT3(-1.00f,  1.00f, -1.00f),  XMFLOAT3(0.0f,  1.0f, 0.0f), XMFLOAT2(0.0f, 0.0f)},
-        { XMFLOAT3(-1.00f,  1.00f,  1.00f),  XMFLOAT3(0.0f,  1.0f, 0.0f), XMFLOAT2(0.0f, 1.0f)},
-        { XMFLOAT3( 1.00f,  1.00f,  1.00f),  XMFLOAT3(0.0f,  1.0f, 0.0f), XMFLOAT2(1.0f, 1.0f)},
-        { XMFLOAT3( 1.00f,  1.00f, -1.00f),  XMFLOAT3(0.0f,  1.0f, 0.0f), XMFLOAT2(1.0f, 0.0f)},
-        //bottom                             
-        { XMFLOAT3(-1.00f, -1.00f,  1.00f),  XMFLOAT3(0.0f,  -1.0f, 0.0f), XMFLOAT2(0.0f, 0.0f)},
-        { XMFLOAT3(-1.00f, -1.00f, -1.00f),  XMFLOAT3(0.0f,  -1.0f, 0.0f), XMFLOAT2(0.0f, 1.0f)},
-        { XMFLOAT3( 1.00f, -1.00f, -1.00f),  XMFLOAT3(0.0f,  -1.0f, 0.0f), XMFLOAT2(1.0f, 1.0f)},
-        { XMFLOAT3( 1.00f, -1.00f,  1.00f),  XMFLOAT3(0.0f,  -1.0f, 0.0f), XMFLOAT2(1.0f, 0.0f)},
-    };
-
-    D3D11_BUFFER_DESC vertexBufferDesc = {};
-    vertexBufferDesc.ByteWidth = sizeof(VertexData);
-    vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-    vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-
-    D3D11_SUBRESOURCE_DATA vertexData = { VertexData };
-
-    ThrowOnFail(_device->CreateBuffer(&vertexBufferDesc, &vertexData, _vertexBuffer.GetAddressOf()));
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
-    WORD IndexData[] =
-    {
-        //Indices
-        0, 1, 2, //front
-        2, 3, 0,
-        4, 5, 6, //right
-        6, 7, 4,
-        8, 9, 10, //back
-        10,11, 8,
-        12, 13, 14, //left
-        14, 15, 12,
-        16, 17, 18, //top
-        18, 19, 16,
-        20, 21, 22, //bottom
-        22, 23, 20
-    };
-
-    D3D11_BUFFER_DESC indexBufferDesc = {};
-    indexBufferDesc.ByteWidth = sizeof(IndexData);
-    indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-    indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-
-    D3D11_SUBRESOURCE_DATA indexData = { IndexData };
-
-    ThrowOnFail(_device->CreateBuffer(&indexBufferDesc, &indexData, _indexBuffer.GetAddressOf()));
 }
 
 //ImGui is a simple UI framework for development, it is not designed for release quality UI
