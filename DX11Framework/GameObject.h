@@ -5,21 +5,21 @@
 
 using Microsoft::WRL::ComPtr;
 
-enum TextureType {
-	DIFFUSE,
-	SPECULAR,
-};
-
 class GameObject
 {
-	DirectX::XMFLOAT4X4 World;
+public:
+	Transform transform;
+
+	DirectX::XMFLOAT4X4& GetWorld(DirectX::XMFLOAT4X4 world) { return World; }
+};
+
+/*Class for objects using meshes and textures*/
+class Model : GameObject {
 	ComPtr<ID3D11ShaderResourceView> Diffuse;
 	ComPtr<ID3D11ShaderResourceView> Specular;
 	MeshData Mesh;
 
 public:
-	GameObject(DirectX::XMFLOAT4X4 world);
-
 	void SetDiffuse(ComPtr<ID3D11ShaderResourceView>& in, ComPtr<ID3D11DeviceContext> context);
 	ComPtr<ID3D11ShaderResourceView>& GetDiffuse() { return Diffuse; }
 
