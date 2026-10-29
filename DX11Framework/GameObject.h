@@ -2,19 +2,37 @@
 #include "Structures.h"
 #include <d3d11_4.h>
 #include <wrl.h>
+#include <vector>
 
 using Microsoft::WRL::ComPtr;
 
 class GameObject
 {
-	DirectX::XMFLOAT4X4 World;
+	/*SCENE GRAPH*/
+	std::vector<ComPtr<GameObject>> Children;
+	ComPtr<GameObject> Parent = nullptr;
+public:
+	Transform transform; 
+
+	Transform& GetTransform() { return transform; }
+
+	template<typename... TArgs>
+	void AddChild(const TArgs&... args) {
+		Children.emplace_back(ComPtr<GameObject>(args...));
+		Children.back()->Parent = this;
+	}
+
+	void UpdateSelfAndChild();
+	XMMATRIX GetLocalObjectMatrix();
+};
+
+/*Class for objects using meshes and textures*/
+class Model : GameObject {
 	ComPtr<ID3D11ShaderResourceView> Diffuse;
 	ComPtr<ID3D11ShaderResourceView> Specular;
 	MeshData Mesh;
 
 public:
-	GameObject(DirectX::XMFLOAT4X4 world);
-
 	void SetDiffuse(ComPtr<ID3D11ShaderResourceView>& in, ComPtr<ID3D11DeviceContext> context);
 	ComPtr<ID3D11ShaderResourceView>& GetDiffuse() { return Diffuse; }
 
