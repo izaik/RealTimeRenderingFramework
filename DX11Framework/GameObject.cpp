@@ -1,8 +1,30 @@
 #include "GameObject.h"
 
-//GameObject::GameObject(DirectX::XMFLOAT4X4 world) {
-//	World = world;
-//}
+XMMATRIX GameObject::GetLocalObjectMatrix() {
+	const XMMATRIX TransformX = XMMatrixRotationX(transform.EulerRot.x);
+	const XMMATRIX TransformY = XMMatrixRotationY(transform.EulerRot.y);
+	const XMMATRIX TransformZ = XMMatrixRotationZ(transform.EulerRot.z);
+
+	const XMMATRIX RotationMatrix = TransformY * TransformX * TransformZ;
+
+	return XMMatrixIdentity()
+		* XMMatrixTranslation(transform.Position.x, transform.Position.y, transform.Position.z)
+		* RotationMatrix
+		* XMMatrixScaling(transform.Scale.x, transform.Scale.y, transform.Scale.z);
+}
+
+void GameObject::UpdateSelfAndChild() {
+	if (Parent) {
+		transform.Model = Parent->transform.Model * GetLocalObjectMatrix();
+	}
+	else {
+		transform.Model = GetLocalObjectMatrix();
+	}
+
+	for (auto&& Child : Children) {
+		Child->UpdateSelfAndChild();
+	}
+}
 
 void Model::SetDiffuse(ComPtr<ID3D11ShaderResourceView>& in, ComPtr<ID3D11DeviceContext> context) {
 	Diffuse = in;
@@ -23,8 +45,7 @@ void Model::Draw(
 	context->IASetVertexBuffers(0, 1, Mesh.VertexBuffer.GetAddressOf(), &Mesh.VBStride, &Mesh.VBOffset);
 	context->IASetIndexBuffer(Mesh.IndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 
-	XMMATRIX = XMS(this->GetWorld());
-	cbData.World = XMMatrixTranspose(XMLoadFloat4x4(this->GetWorld());
+	cbData.World = XMMatrixTranspose(this->transform.Model);
 	context->Map(constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
 	memcpy(mappedSubresource.pData, &cbData, sizeof(cbData));
 	context->Unmap(constantBuffer.Get(), 0);
@@ -32,6 +53,7 @@ void Model::Draw(
 	context->DrawIndexed(Mesh.IndexCount, 0, 0);
 }
 
-void Update(float deltaTime) {
-	XMStoreFloat4x4(&World, XMMatrixIdentity() * XMMatrixRotationY(deltaTime * 0.17f) * XMMatrixScaling(0.6f, 0.6f, 0.6f));
+void Model::Update(float deltaTime) {
+	this->transform.EulerRot.y + 20 * deltaTime;
+	this->UpdateSelfAndChild();
 }

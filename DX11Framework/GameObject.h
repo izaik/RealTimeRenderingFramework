@@ -2,15 +2,28 @@
 #include "Structures.h"
 #include <d3d11_4.h>
 #include <wrl.h>
+#include <vector>
 
 using Microsoft::WRL::ComPtr;
 
 class GameObject
 {
+	/*SCENE GRAPH*/
+	std::vector<ComPtr<GameObject>> Children;
+	ComPtr<GameObject> Parent = nullptr;
 public:
-	Transform transform;
+	Transform transform; 
 
-	DirectX::XMFLOAT4X4& GetWorld(DirectX::XMFLOAT4X4 world) { return World; }
+	Transform& GetTransform() { return transform; }
+
+	template<typename... TArgs>
+	void AddChild(const TArgs&... args) {
+		Children.emplace_back(ComPtr<GameObject>(args...));
+		Children.back()->Parent = this;
+	}
+
+	void UpdateSelfAndChild();
+	XMMATRIX GetLocalObjectMatrix();
 };
 
 /*Class for objects using meshes and textures*/
