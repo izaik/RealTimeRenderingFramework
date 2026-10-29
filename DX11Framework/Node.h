@@ -3,31 +3,37 @@
 #include <d3d11_4.h>
 #include <wrl.h>
 #include <vector>
+#include <memory>
+//https://webglfundamentals.org/webgl/lessons/webgl-scene-graph.html link for template i based this off - include in report
 
 using Microsoft::WRL::ComPtr;
 
-class GameObject
+class Node
 {
-	/*SCENE GRAPH*/
-	std::vector<ComPtr<GameObject>> Children;
-	ComPtr<GameObject> Parent = nullptr;
 public:
-	Transform transform; 
+	DirectX::XMMATRIX LocalMatrix;
+	DirectX::XMMATRIX WorldMatrix;
+	std::vector<std::unique_ptr<Node>> Children;
+	std::unique_ptr<Node> Parent;
 
-	Transform& GetTransform() { return transform; }
-
-	template<typename... TArgs>
-	void AddChild(const TArgs&... args) {
-		Children.emplace_back(ComPtr<GameObject>(args...));
-		Children.back()->Parent = this;
+	Node() {
+		LocalMatrix = XMMatrixIdentity();
+		WorldMatrix = XMMatrixIdentity();
+		Children = {};
+		Parent = nullptr;
 	}
 
-	void UpdateSelfAndChild();
-	XMMATRIX GetLocalObjectMatrix();
+	void SetParent(std::unique_ptr<Node> Parent);
+	//Node* FindNode(std::string name)
+	//{
+	//	// for each child
+	//		// if child name == name
+	//			return child_ptr.get()
+	//}
 };
 
 /*Class for objects using meshes and textures*/
-class Model : GameObject {
+class GeometryNode : Node {
 	ComPtr<ID3D11ShaderResourceView> Diffuse;
 	ComPtr<ID3D11ShaderResourceView> Specular;
 	MeshData Mesh;

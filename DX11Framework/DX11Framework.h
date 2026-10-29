@@ -10,7 +10,7 @@
 #include "ScanCode.h"
 #include "OBJLoader.h"
 #include "Structures.h"
-#include "GameObject.h"
+#include "Node.h"
 
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
@@ -51,7 +51,7 @@ class DX11Framework
 	ComPtr<ID3D11ShaderResourceView> _crateDiffuseTex;
 	ComPtr<ID3D11ShaderResourceView> _crateSpecularTex;
 	
-	Model* objectTest = new Model();
+	GeometryNode* objectTest = new GeometryNode(_World);
 
 	ConstantBuffer _cbData;
 
