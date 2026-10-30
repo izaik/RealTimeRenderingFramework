@@ -11,6 +11,7 @@
 #include "OBJLoader.h"
 #include "Structures.h"
 #include "Node.h"
+#include "DDSTextureLoader/DDSTextureLoader.h"
 
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
@@ -51,7 +52,7 @@ class DX11Framework
 	ComPtr<ID3D11ShaderResourceView> _crateDiffuseTex;
 	ComPtr<ID3D11ShaderResourceView> _crateSpecularTex;
 	
-	GeometryNode* objectTest = new GeometryNode(_World);
+	GeometryNode* objectTest = new GeometryNode("objectTest");
 
 	ConstantBuffer _cbData;
 

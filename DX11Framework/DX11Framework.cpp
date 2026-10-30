@@ -3,7 +3,6 @@
 #include "Util.h"
 #include "IMGUI/imgui.h"
 #include "IMGUI/imgui_impl_dx11.h"
-#include "DDSTextureLoader/DDSTextureLoader.cpp"
 #include "nlohmann/json.hpp"
 using json = nlohmann::json;
 
@@ -297,7 +296,7 @@ void DX11Framework::InitPipelineVariables()
 void DX11Framework::InitRunTimeData()
 {    
     //Camera
-    XMFLOAT3 Eye = XMFLOAT3(0, 0, -10.0f);
+    XMFLOAT3 Eye = XMFLOAT3(0, 0, -20.0f);
     XMFLOAT3 At = XMFLOAT3(0, 0, 0);
     XMFLOAT3 Up = XMFLOAT3(0, 1, 0);
 

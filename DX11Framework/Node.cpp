@@ -1,18 +1,10 @@
 #include "Node.h"
-void Node::SetParent(Node* parent) {
-	Node* n = this;
 
-	if (Parent) {
-		auto search = std::find(Parent->Children.begin(), Parent->Children.end(), this);
-		if (search == Parent->Children.end()) {
-			Parent->Children.erase(search);
-		}
-	}
-
-	if (parent) {
-		parent->Children.push_back(std::make_unique<Node>(n));
-	}
-	Parent = std::make_unique<Node>(parent);
+Node::Node(std::string name) {
+	Name = name;
+	LocalMatrix = XMMatrixIdentity();
+	WorldMatrix = XMMatrixIdentity();
+	Parent = nullptr;
 }
 
 void Node::UpdateWorldMatrix() {

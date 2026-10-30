@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DX11Framework.cpp" />
+    <ClCompile Include="include\DDSTextureLoader\DDSTextureLoader.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="Node.h" />
     <ClCompile Include="include\ImGui\imgui.cpp" />
@@ -179,6 +180,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DX11Framework.h" />
+    <ClInclude Include="include\DDSTextureLoader\DDSTextureLoader.h" />
     <ClInclude Include="include\ImGui\imconfig.h" />
     <ClInclude Include="include\ImGui\imgui.h" />
     <ClInclude Include="include\ImGui\imgui_impl_dx11.h" />
