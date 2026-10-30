@@ -4,26 +4,31 @@
 #include <wrl.h>
 #include <vector>
 #include <memory>
+#include <algorithm>
 //https://webglfundamentals.org/webgl/lessons/webgl-scene-graph.html link for template i based this off - include in report
 
 using Microsoft::WRL::ComPtr;
 
 class Node
 {
+	std::string Name;
 public:
 	DirectX::XMMATRIX LocalMatrix;
 	DirectX::XMMATRIX WorldMatrix;
 	std::vector<std::unique_ptr<Node>> Children;
 	std::unique_ptr<Node> Parent;
 
-	Node() {
+	Node(std::string name, Node* parent) {
+		Name = name;
 		LocalMatrix = XMMatrixIdentity();
 		WorldMatrix = XMMatrixIdentity();
 		Children = {};
-		Parent = nullptr;
+		std::unique_ptr<Node> Parent = std::make_unique<Node>(parent);
 	}
 
-	void SetParent(std::unique_ptr<Node> Parent);
+	void SetParent(Node* parent);
+
+	void UpdateWorldMatrix();
 	//Node* FindNode(std::string name)
 	//{
 	//	// for each child

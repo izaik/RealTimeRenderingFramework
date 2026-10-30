@@ -1,7 +1,31 @@
 #include "Node.h"
-void Node::SetParent(std::unique_ptr<Node> parent) {
-	if (this->Parent) {
-		int index = (this->Parent).get()->Children.index
+void Node::SetParent(Node* parent) {
+	Node* n = this;
+
+	if (Parent) {
+		auto search = std::find(Parent->Children.begin(), Parent->Children.end(), this);
+		if (search == Parent->Children.end()) {
+			Parent->Children.erase(search);
+		}
+	}
+
+	if (parent) {
+		parent->Children.push_back(std::make_unique<Node>(n));
+	}
+	Parent = std::make_unique<Node>(parent);
+}
+
+void Node::UpdateWorldMatrix() {
+	if (Parent) {
+		WorldMatrix = LocalMatrix * this->Parent->WorldMatrix;
+	}
+	else {
+		//if no parent exists use object localmatrix (should only be scene root node)
+		WorldMatrix = LocalMatrix;
+	}
+
+	for (auto& Child: Children) {
+		Child->UpdateWorldMatrix();
 	}
 }
 
@@ -34,5 +58,5 @@ void GeometryNode::Draw(
 }
 
 void GeometryNode::Update(float deltaTime) {
-	XMStoreFloat4x4(WorldMatrix, XMMatrixIdentity() * XMMatrixRotationY(deltaTime * 0.17f) * XMMatrixScaling(0.6f, 0.6f, 0.6f));
+	WorldMatrix = XMMatrixIdentity() * XMMatrixRotationY(deltaTime * 0.17f) * XMMatrixScaling(0.6f, 0.6f, 0.6f);
 }
