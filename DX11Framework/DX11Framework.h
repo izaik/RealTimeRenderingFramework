@@ -53,8 +53,8 @@ class DX11Framework
 	
 	ComPtr<ID3D11ShaderResourceView> _crateDiffuseTex;
 	ComPtr<ID3D11ShaderResourceView> _crateSpecularTex;
-	
-	Scene _Scene = *new Scene();
+
+	Scene _Scene;
 
 	ConstantBuffer _cbData;
 

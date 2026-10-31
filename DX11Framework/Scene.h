@@ -8,7 +8,7 @@ using Microsoft::WRL::ComPtr;
 
 class Scene {
 public:
-	Node* SceneRoot = nullptr;
+	std::unique_ptr<Node> SceneRoot = nullptr;
 
 	Scene();
 	virtual ~Scene() = default;

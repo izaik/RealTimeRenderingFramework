@@ -1,13 +1,13 @@
 #include "Scene.h"
-
-Scene::Scene() {
-	SceneRoot = new Node("SceneRoot");
+Scene::Scene()
+{
+	SceneRoot = std::make_unique<Node>("SceneRoot");
 };
 
 void Scene::DrawScene(RenderContext _RenderContext)
 {
 	//verify we have all needed data
-	if (SceneRoot == nullptr || _RenderContext.context == nullptr || _RenderContext.cbData == nullptr)
+	if (_RenderContext.context == nullptr || _RenderContext.cbData == nullptr)
 	{
 		return;
 	}
