@@ -9,9 +9,11 @@
 #include <array>
 #include "ScanCode.h"
 #include "OBJLoader.h"
+#include "DDSTextureLoader/DDSTextureLoader.h"
 #include "Structures.h"
 #include "Node.h"
-#include "DDSTextureLoader/DDSTextureLoader.h"
+#include "Scene.h"
+
 
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
@@ -52,7 +54,7 @@ class DX11Framework
 	ComPtr<ID3D11ShaderResourceView> _crateDiffuseTex;
 	ComPtr<ID3D11ShaderResourceView> _crateSpecularTex;
 	
-	GeometryNode* objectTest = new GeometryNode("objectTest");
+	Scene _Scene = *new Scene();
 
 	ConstantBuffer _cbData;
 

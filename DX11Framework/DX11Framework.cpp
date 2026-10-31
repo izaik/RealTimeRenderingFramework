@@ -294,7 +294,7 @@ void DX11Framework::InitPipelineVariables()
 }
 
 void DX11Framework::InitRunTimeData()
-{    
+{
     //Camera
     XMFLOAT3 Eye = XMFLOAT3(0, 0, -20.0f);
     XMFLOAT3 At = XMFLOAT3(0, 0, 0);
@@ -316,7 +316,7 @@ void DX11Framework::InitRunTimeData()
     _defaultMaterial.Specular = XMFLOAT4(0.628281f, 0.555802f, 0.366065f, 1.0f);
     _defaultMaterial.Shininess = float(52.2f);
     //more material values at http://devernay.free.fr/cours/opengl/materials.html
-   
+
     //load light from json config
     std::ifstream input_json(L"Lights/WhiteLight.json");
     json j;
@@ -326,7 +326,7 @@ void DX11Framework::InitRunTimeData()
     _loadedLight.Ambient = XMFLOAT4(j["Ambient"][0], j["Ambient"][1], j["Ambient"][2], j["Ambient"][3]);
     _loadedLight.Specular = XMFLOAT4(j["Specular"][0], j["Specular"][1], j["Specular"][2], j["Specular"][3]);
     _loadedLight.Direction = XMFLOAT3(j["Direction"][0], j["Direction"][1], j["Direction"][2]);
-    
+
 
     //load crate diffuse
     CreateDDSTextureFromFile(
@@ -345,9 +345,14 @@ void DX11Framework::InitRunTimeData()
         _crateSpecularTex.GetAddressOf()
     );
 
-    objectTest->SetMeshData(OBJLoader::Load("Models/Airplane/Hercules.obj", _device));
-    objectTest->SetDiffuse(_crateDiffuseTex, _immediateContext);
-    objectTest->SetSpecular(_crateSpecularTex, _immediateContext);
+    _Scene.SceneRoot->AddChild<GeometryNode>("crate1", _Scene.SceneContext, _Scene.SceneDevice, _crateDiffuseTex, _crateSpecularTex, "/Models/Made In 3ds Max/cube.obj");
+
+        //crate1->SetMeshData(OBJLoader::Load("/Models/Made In 3ds Max/cube.obj", _device));
+        //crate1->SetDiffuse(_crateDiffuseTex, _immediateContext);
+        //crate1->SetSpecular(_crateSpecularTex, _immediateContext);
+        //
+        //crate1->AddChild<GeometryNode>("crate2");
+        //crate1->Children[0]
 }
 
 DX11Framework::~DX11Framework()
@@ -370,7 +375,8 @@ void DX11Framework::Update()
 
     _cbData.timeSinceStart = simpleCount;
 
-    objectTest->Update(_cbData.timeSinceStart);
+    //crate1->Update(_cbData.timeSinceStart);
+    //crate1->UpdateWorldMatrix();
 
     if (_keys[SCANCODE_TAB])
     {
@@ -399,16 +405,17 @@ void DX11Framework::Draw()
     _cbData.mat = _defaultMaterial;
     _cbData.light = _loadedLight;
 
-    //Write constant buffer data onto GPU
-    D3D11_MAPPED_SUBRESOURCE mappedSubresource;
-    _immediateContext->Map(_constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
-    memcpy(mappedSubresource.pData, &_cbData, sizeof(_cbData));
-    _immediateContext->Unmap(_constantBuffer.Get(), 0);
+    RenderContext rc;
+    rc.context = _immediateContext.Get();
+    rc.constantBuffer = _constantBuffer.Get();
+    rc.cbData = &_cbData;
+
+    _Scene.DrawScene(rc);
 
     _immediateContext->VSSetShader(_vertexShader.Get(), nullptr, 0);
     _immediateContext->PSSetShader(_pixelShader.Get(), nullptr, 0);
 
-    objectTest->Draw(_cbData, _immediateContext, _constantBuffer, mappedSubresource);
+    //crate1->Draw(_cbData, _immediateContext, _constantBuffer, mappedSubresource);
 
     //UI renders last, as this is painted over whatver is on screen
     RenderUI();
