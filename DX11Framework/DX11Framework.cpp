@@ -296,8 +296,8 @@ void DX11Framework::InitPipelineVariables()
 void DX11Framework::InitRunTimeData()
 {
     //Camera
-    XMFLOAT3 Eye = XMFLOAT3(0, 0, -20.0f);
-    XMFLOAT3 At = XMFLOAT3(0, 0, 0);
+    XMFLOAT3 Eye = XMFLOAT3(0, 3.0f, -6.0f);
+    XMFLOAT3 At = XMFLOAT3(0, -3.0f, 0);
     XMFLOAT3 Up = XMFLOAT3(0, 1, 0);
 
     XMStoreFloat4x4(&_View, XMMatrixLookAtLH(XMLoadFloat3(&Eye), XMLoadFloat3(&At), XMLoadFloat3(&Up)));
@@ -345,14 +345,22 @@ void DX11Framework::InitRunTimeData()
         _crateSpecularTex.GetAddressOf()
     );
 
-    _Scene.SceneRoot->AddChild<GeometryNode>("crate1", _Scene.SceneContext, _Scene.SceneDevice, _crateDiffuseTex, _crateSpecularTex, "/Models/Made In 3ds Max/cube.obj");
+    _Scene.SceneRoot->AddChild<GeometryNode>("Sun", _crateDiffuseTex, _crateSpecularTex, "Models/Made In 3ds Max/cube.obj", _device);
 
-        //crate1->SetMeshData(OBJLoader::Load("/Models/Made In 3ds Max/cube.obj", _device));
-        //crate1->SetDiffuse(_crateDiffuseTex, _immediateContext);
-        //crate1->SetSpecular(_crateSpecularTex, _immediateContext);
-        //
-        //crate1->AddChild<GeometryNode>("crate2");
-        //crate1->Children[0]
+    if (!_Scene.SceneRoot->Children.empty())
+    {
+        Node* sunNode = _Scene.SceneRoot->Children[0].get();
+
+        sunNode->AddChild<GeometryNode>("Earth", _crateDiffuseTex, _crateSpecularTex, "Models/Made In 3ds Max/cube.obj", _device);
+
+        if (!sunNode->Children.empty())
+        {
+            Node* earthNode = sunNode->Children[0].get();
+
+            earthNode->AddChild<GeometryNode>("Moon", _crateDiffuseTex, _crateSpecularTex, "Models/Made In 3ds Max/cube.obj", _device);
+        }
+    }
+
 }
 
 DX11Framework::~DX11Framework()
@@ -375,8 +383,62 @@ void DX11Framework::Update()
 
     _cbData.timeSinceStart = simpleCount;
 
-    //crate1->Update(_cbData.timeSinceStart);
-    //crate1->UpdateWorldMatrix();
+    // Defensive structural tree validation
+    if (_Scene.SceneRoot && !_Scene.SceneRoot->Children.empty())
+    {
+        Node* sun = _Scene.SceneRoot->Children[0].get();
+
+        // -------------------------------------------------------------
+        // 1. THE SUN: Stays at origin, spins slowly
+        // -------------------------------------------------------------
+        float sunSpin = simpleCount * 0.2f;
+        XMMATRIX sunLocal = XMMatrixScaling(1.0f, 1.0f, 1.0f) * // The largest body
+            XMMatrixRotationY(sunSpin) *
+            XMMatrixTranslation(0.0f, 0.0f, 0.0f);
+        XMStoreFloat4x4(&sun->LocalMatrix, sunLocal);
+
+        // Check for Generation 2 (Earth)
+        if (!sun->Children.empty())
+        {
+            Node* earth = sun->Children[0].get();
+
+            // -------------------------------------------------------------
+            // 2. THE EARTH: Orbit velocity and internal spin
+            // -------------------------------------------------------------
+            float earthOrbit = simpleCount * 0.6f; // Orbital speed around the Sun
+            float earthSpin = simpleCount * 2.5f; // Faster day/night spin
+            float earthOrbitRadius = 4.5f;          // Distance from the Sun
+
+            // Note how we combine the Earth's local spin AND its orbital step 
+            // inside its own LocalMatrix before propagating!
+            XMMATRIX earthLocal = XMMatrixScaling(0.6f, 0.6f, 0.6f) *
+                XMMatrixRotationY(earthSpin) *
+                XMMatrixTranslation(earthOrbitRadius, 0.0f, 0.0f) *
+                XMMatrixRotationY(earthOrbit); // Rotates the translated offset around the Sun
+
+            XMStoreFloat4x4(&earth->LocalMatrix, earthLocal);
+
+            // Check for Generation 3 (The Moon)
+            if (!earth->Children.empty())
+            {
+                Node* moon = earth->Children[0].get();
+
+                // -------------------------------------------------------------
+                // 3. THE MOON: Orbit velocity relative strictly to the Earth
+                // -------------------------------------------------------------
+                float moonOrbit = simpleCount * 3.0f; // Rapid orbit around Earth
+                float moonOrbitRadius = 1.6f;         // Tightly bound to Earth's space
+
+                // The Moon's translation is evaluated relative to where the Earth is!
+                XMMATRIX moonLocal = XMMatrixScaling(0.2f, 0.2f, 0.2f) * // Tiny satellite
+                    XMMatrixTranslation(moonOrbitRadius, 0.0f, 0.0f) *
+                    XMMatrixRotationY(moonOrbit); // Rotates it around the Earth's center
+
+                XMStoreFloat4x4(&moon->LocalMatrix, moonLocal);
+            }
+        }
+    }
+
 
     if (_keys[SCANCODE_TAB])
     {
@@ -405,15 +467,15 @@ void DX11Framework::Draw()
     _cbData.mat = _defaultMaterial;
     _cbData.light = _loadedLight;
 
+    _immediateContext->VSSetShader(_vertexShader.Get(), nullptr, 0);
+    _immediateContext->PSSetShader(_pixelShader.Get(), nullptr, 0);
+
     RenderContext rc;
     rc.context = _immediateContext.Get();
     rc.constantBuffer = _constantBuffer.Get();
     rc.cbData = &_cbData;
 
     _Scene.DrawScene(rc);
-
-    _immediateContext->VSSetShader(_vertexShader.Get(), nullptr, 0);
-    _immediateContext->PSSetShader(_pixelShader.Get(), nullptr, 0);
 
     //crate1->Draw(_cbData, _immediateContext, _constantBuffer, mappedSubresource);
 
