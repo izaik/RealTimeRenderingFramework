@@ -1,7 +1,10 @@
 #include "Scene.h"
 
-Scene::Scene(ComPtr<ID3D11DeviceContext> &context, ComPtr<ID3D11Device> &device) {
+Scene::Scene() {
 	SceneRoot = new Node("SceneRoot");
-	SceneContext = context;
-	SceneDevice = device;
+};
+
+void Scene::DrawScene(RenderContext _RenderContext)
+{
+	SceneRoot->Draw(_RenderContext);
 };

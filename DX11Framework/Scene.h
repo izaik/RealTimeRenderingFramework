@@ -1,15 +1,17 @@
 #pragma once
 
+#include <wrl.h>
 #include "Node.h"
+#include "Structures.h"
 
 using Microsoft::WRL::ComPtr;
 
 class Scene {
 public:
 	Node* SceneRoot;
-	ComPtr<ID3D11DeviceContext> SceneContext;
-	ComPtr<ID3D11Device> SceneDevice;
 
-	Scene(ComPtr<ID3D11DeviceContext> &context, ComPtr<ID3D11Device> &device);
+	Scene();
 	virtual ~Scene() = default;
+
+	void DrawScene(RenderContext _RenderContext);
 };
