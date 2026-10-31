@@ -56,18 +56,8 @@ struct ConstantBuffer
 	float timeSinceStart;
 };
 
-struct Transform {
-	/*SPACE INFORMATION*/
-	//Local Space Info
-	XMFLOAT3 Position = { 0.0f, 0.0f, 0.0f };
-	XMFLOAT3 EulerRot = { 0.0f, 0.0f, 0.0f };
-	XMFLOAT3 Scale = { 1.0f, 1.0f, 1.0f };
-
-	//Global Space Info
-	XMMATRIX Model = XMMatrixSet(
-		1.0f, 1.0f, 1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f, 1.0f
-	);
+struct RenderContext {
+	ID3D11DeviceContext* context;
+	ID3D11Buffer* constantBuffer;
+	ConstantBuffer* cbData;
 };
