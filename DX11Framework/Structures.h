@@ -57,7 +57,7 @@ struct ConstantBuffer
 };
 
 struct RenderContext {
-	ID3D11DeviceContext* context;
-	ID3D11Buffer* constantBuffer;
-	ConstantBuffer* cbData;
+	ID3D11DeviceContext* context = nullptr;
+	ID3D11Buffer* constantBuffer = nullptr;
+	ConstantBuffer* cbData = nullptr;
 };
