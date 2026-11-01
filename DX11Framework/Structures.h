@@ -56,6 +56,7 @@ struct ConstantBuffer
 	float timeSinceStart;
 };
 
+/*Struct used for commonly used render data*/
 struct RenderContext {
 	ID3D11DeviceContext* context = nullptr;
 	ID3D11Buffer* constantBuffer = nullptr;

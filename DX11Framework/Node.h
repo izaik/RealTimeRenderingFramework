@@ -5,9 +5,11 @@
 #include <algorithm>
 #include "OBJLoader.h"
 #include "Structures.h"
+#include "Resource.h"
 //https://webglfundamentals.org/webgl/lessons/webgl-scene-graph.html
 //https://developers.google.com/sceneform/reference/com/google/ar/sceneform/NodeParent
 //https://learnopengl.com/Guest-Articles/2021/Scene/Scene-Graph
+//https://docs.unity.com/en-us/engine/6000.6/manual/working-with-gameobjects/game-objects
 
 using Microsoft::WRL::ComPtr;
 
@@ -40,24 +42,17 @@ public:
 
 /*Class for objects using meshes and textures*/
 class GeometryNode : public Node {
+	TextureResource Diffuse;
+	TextureResource Specular;
 	ComPtr<ID3D11ShaderResourceView> Diffuse;
 	ComPtr<ID3D11ShaderResourceView> Specular;
 	MeshData Mesh;
 
 public:
 	GeometryNode(std::string name,
-		ComPtr<ID3D11ShaderResourceView>& diffuse, 
-		ComPtr<ID3D11ShaderResourceView>& specular,
+		TextureResource& Diffuse,
+		TextureResource& Specular,
 		const char* filepath, ComPtr<ID3D11Device>& device);
-
-	void SetDiffuse(ComPtr<ID3D11ShaderResourceView>& in, ComPtr<ID3D11DeviceContext> context);
-	ComPtr<ID3D11ShaderResourceView>& GetDiffuse() { return Diffuse; }
-
-	void SetSpecular(ComPtr<ID3D11ShaderResourceView>& in, ComPtr<ID3D11DeviceContext> context);
-	ComPtr<ID3D11ShaderResourceView>& GetSpecular() { return Specular; }
-
-	void SetMeshData(MeshData in) { Mesh = in; }
-	MeshData* GetData() { return &Mesh; }
 
 	void Draw(RenderContext& _RenderContext) override;
 };

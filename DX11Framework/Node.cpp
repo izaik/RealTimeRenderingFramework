@@ -34,23 +34,13 @@ void Node::Draw(RenderContext& _RenderContext) {
 }
 
 GeometryNode::GeometryNode(std::string name, 
-	ComPtr<ID3D11ShaderResourceView>& diffuse, 
-	ComPtr<ID3D11ShaderResourceView>& specular,
+	TextureResource& Diffuse,
+	TextureResource& Specular,
 	const char* filepath, ComPtr<ID3D11Device>& device) : Node(name)
 {
-	Diffuse = diffuse;
-	Specular = specular;
+	Diffuse; //change once resource manager ready
+	Specular; //change once resource manager ready
 	Mesh = OBJLoader::Load(filepath, device);
-}
-
-void GeometryNode::SetDiffuse(ComPtr<ID3D11ShaderResourceView>& in, ComPtr<ID3D11DeviceContext> context) {
-	Diffuse = in;
-	context->PSSetShaderResources(0, 1, in.GetAddressOf());
-}
-
-void GeometryNode::SetSpecular(ComPtr<ID3D11ShaderResourceView>& in, ComPtr<ID3D11DeviceContext> context) {
-	Specular = in;
-	context->PSSetShaderResources(1, 1, in.GetAddressOf());
 }
 
 void GeometryNode::Draw(RenderContext& _RenderContext)
