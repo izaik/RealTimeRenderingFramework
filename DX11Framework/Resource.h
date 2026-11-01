@@ -11,7 +11,7 @@ using Microsoft::WRL::ComPtr;
 class Resource {};
 
 class MeshResource : Resource {
-	MeshData M;
+	MeshData Mesh;
 
 public:
 	MeshResource(const std::filesystem::path& filepath, ComPtr<ID3D11Device>& device);
