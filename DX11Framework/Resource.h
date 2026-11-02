@@ -8,7 +8,10 @@
 
 using Microsoft::WRL::ComPtr;
 
-class Resource {};
+//Empty class used as base
+class Resource {
+	Resource();
+};
 
 class MeshResource : Resource {
 	MeshData Mesh;

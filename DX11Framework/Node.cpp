@@ -34,20 +34,20 @@ void Node::Draw(RenderContext& _RenderContext) {
 }
 
 GeometryNode::GeometryNode(std::string name, 
-	TextureResource& Diffuse,
-	TextureResource& Specular,
+	TextureResource& diffuse,
+	TextureResource& specular,
 	const char* filepath, ComPtr<ID3D11Device>& device) : Node(name)
 {
-	Diffuse; //change once resource manager ready
-	Specular; //change once resource manager ready
+	Diffuse = diffuse; //change once resource manager ready
+	Specular = specular; //change once resource manager ready
 	Mesh = OBJLoader::Load(filepath, device);
 }
 
 void GeometryNode::Draw(RenderContext& _RenderContext)
 {
 	//set textures
-	_RenderContext.context->PSSetShaderResources(0, 1, Diffuse.GetAddressOf());
-	_RenderContext.context->PSSetShaderResources(1, 1, Specular.GetAddressOf());
+	_RenderContext.context->PSSetShaderResources(0, 1, Diffuse.Texture.GetAddressOf());
+	_RenderContext.context->PSSetShaderResources(1, 1, Specular.Texture.GetAddressOf());
 
 	//configure vertex and index buffers
 	_RenderContext.context->IASetVertexBuffers(0, 1, Mesh.VertexBuffer.GetAddressOf(), &Mesh.VBStride, &Mesh.VBOffset);

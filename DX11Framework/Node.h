@@ -44,14 +44,12 @@ public:
 class GeometryNode : public Node {
 	TextureResource Diffuse;
 	TextureResource Specular;
-	ComPtr<ID3D11ShaderResourceView> Diffuse;
-	ComPtr<ID3D11ShaderResourceView> Specular;
 	MeshData Mesh;
 
 public:
 	GeometryNode(std::string name,
-		TextureResource& Diffuse,
-		TextureResource& Specular,
+		TextureResource& diffuse,
+		TextureResource& specular,
 		const char* filepath, ComPtr<ID3D11Device>& device);
 
 	void Draw(RenderContext& _RenderContext) override;
