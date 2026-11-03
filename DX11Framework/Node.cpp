@@ -34,15 +34,12 @@ void Node::Draw(RenderContext& _RenderContext) {
 }
 
 GeometryNode::GeometryNode(ResourceManager* RM, std::string name,
-	std::string diffname, const char* diffpath, std::string specname, const char* specpath, std::string meshname, const char* meshpath,
+	const char* diffpath, const char* specpath, const char* meshpath,
 	ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context) : Node(RM, name)
 {
-	DiffName = diffname;
-	Diffuse = RM->CacheResource<TextureResource>(diffname, diffname, device, context, diffpath);
-	SpecName = specname;
-	Specular = RM->CacheResource<TextureResource>(specname, specname, device, context, specpath);
-	MeshName = meshname;
-	MeshRes = RM->CacheResource<MeshResource>(meshname, meshname, meshpath, device);
+	Diffuse = RM->GetResource<TextureResource>(diffpath, device, context, diffpath);
+	Specular = RM->GetResource<TextureResource>(specpath, device, context, specpath);
+	MeshRes = RM->GetResource<MeshResource>(meshpath, meshpath, device);
 }
 
 void GeometryNode::Draw(RenderContext& _RenderContext)

@@ -15,6 +15,7 @@ public:
 	Scene();
 	virtual ~Scene() = default;
 
+	void UpdateNodeTransformFromJson(const json& j, Node* n, float simpleCount);
 	void LoadSceneFromJson(std::string SceneName);
 	void DrawScene(RenderContext _RenderContext);
 };

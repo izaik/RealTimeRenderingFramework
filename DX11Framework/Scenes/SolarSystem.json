@@ -1,10 +1,85 @@
 {
-  "GeometryNode": [
-    {
-      "name": "Sun",
-      "position": [ 0.0, 0.0, 0.0 ],
-      "scale": [ 1.0, 1.0, 1.0 ],
-      "rotation" :  []
+  "GeometryNode": {
+    "name": "Sun",
+    "diffpath": "Textures/Crate_COLOR.dds",
+    "specpath": "Textures/Crate_SPEC",
+    "meshpath": "Models/Made In 3ds Max/sphere.obj",
+    "transform": {
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "rotation": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      }
+    },
+    "behavior": {
+      "rotationSpeedYaw": 0.2
+    },
+    "children": {
+      "GeometryNode": {
+        "name": "Earth",
+        "diffpath": "Textures/Crate_COLOR.dds",
+        "specpath": "Textures/Crate_SPEC",
+        "meshpath": "Models/Made In 3ds Max/sphere.obj",
+
+        "transform": {
+          "scale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "rotation": {
+            "pitch": 0.0,
+            "yaw": 0.0,
+            "roll": 0.0
+          },
+          "position": {
+            "x": 1.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "behavior": {
+          "rotationSpeedYaw": 0.2
+        },
+        "children": {
+          "GeometryNode": {
+            "name": "Moon",
+            "diffpath": "Textures/Crate_COLOR.dds",
+            "specpath": "Textures/Crate_SPEC",
+            "meshpath": "Models/Made In 3ds Max/sphere.obj",
+            "transform": {
+              "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+              },
+              "rotation": {
+                "pitch": 0.0,
+                "yaw": 0.0,
+                "roll": 0.0
+              },
+              "position": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+              }
+            },
+            "behavior": {
+              "rotationSpeedYaw": 0.2
+            }
+          }
+        }
+      }
     }
-  ]
+  }
 }

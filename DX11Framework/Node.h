@@ -38,16 +38,13 @@ public:
 
 /*Class for objects using meshes and textures*/
 class GeometryNode : public Node {
-	std::string DiffName;
 	std::shared_ptr<TextureResource> Diffuse;
-	std::string SpecName;
 	std::shared_ptr<TextureResource> Specular;
-	std::string MeshName;
 	std::shared_ptr<MeshResource> MeshRes;
 
 public:
 	GeometryNode(ResourceManager* RM, std::string name,
-		std::string diffname, const char* diffpath, std::string specname, const char* specpath, std::string meshname, const char* meshpath, //there is probably a better way to do this
+		const char* diffpath, const char* specpath, const char* meshpath, //there is probably a better way to do this
 		ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context) : Node(RM, name) { }
 
 	void Draw(RenderContext& _RenderContext) override;
