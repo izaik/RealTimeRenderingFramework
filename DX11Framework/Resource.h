@@ -10,19 +10,22 @@ using Microsoft::WRL::ComPtr;
 
 //Empty class used as base
 class Resource {
+public:
 	Resource();
 };
 
 class MeshResource : Resource {
+public:
+	std::string MeshName;
 	MeshData Mesh;
 
-public:
-	MeshResource(const std::filesystem::path& filepath, ComPtr<ID3D11Device>& device);
+	MeshResource(std::string meshName, const std::filesystem::path& filepath, ComPtr<ID3D11Device>& device);
 };
 
 class TextureResource : Resource {
+public:
+	std::string TextureName;
 	ComPtr<ID3D11ShaderResourceView> Texture;
 
-public:
-	TextureResource(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context, const std::filesystem::path& filepath);
+	TextureResource(std::string textureName, ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context, const std::filesystem::path& filepath);
 };

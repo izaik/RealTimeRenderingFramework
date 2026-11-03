@@ -1,6 +1,6 @@
 #include "Node.h"
 
-Node::Node(std::string name) {
+Node::Node(ResourceManager* RM, std::string name) {
 	Name = name;
 	XMStoreFloat4x4(&LocalMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&WorldMatrix, XMMatrixIdentity());
@@ -33,25 +33,27 @@ void Node::Draw(RenderContext& _RenderContext) {
 	}
 }
 
-GeometryNode::GeometryNode(std::string name, 
-	TextureResource& diffuse,
-	TextureResource& specular,
-	const char* filepath, ComPtr<ID3D11Device>& device) : Node(name)
+GeometryNode::GeometryNode(ResourceManager* RM, std::string name,
+	std::string diffname, const char* diffpath, std::string specname, const char* specpath, std::string meshname, const char* meshpath,
+	ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context) : Node(RM, name)
 {
-	Diffuse = diffuse; //change once resource manager ready
-	Specular = specular; //change once resource manager ready
-	Mesh = OBJLoader::Load(filepath, device);
+	DiffName = diffname;
+	Diffuse = RM->CacheResource<TextureResource>(diffname, diffname, device, context, diffpath);
+	SpecName = specname;
+	Specular = RM->CacheResource<TextureResource>(specname, specname, device, context, specpath);
+	MeshName = meshname;
+	MeshRes = RM->CacheResource<MeshResource>(meshname, meshname, meshpath, device);
 }
 
 void GeometryNode::Draw(RenderContext& _RenderContext)
 {
 	//set textures
-	_RenderContext.context->PSSetShaderResources(0, 1, Diffuse.Texture.GetAddressOf());
-	_RenderContext.context->PSSetShaderResources(1, 1, Specular.Texture.GetAddressOf());
+	_RenderContext.context->PSSetShaderResources(0, 1, Diffuse->Texture.GetAddressOf());
+	_RenderContext.context->PSSetShaderResources(1, 1, Specular->Texture.GetAddressOf());
 
 	//configure vertex and index buffers
-	_RenderContext.context->IASetVertexBuffers(0, 1, Mesh.VertexBuffer.GetAddressOf(), &Mesh.VBStride, &Mesh.VBOffset);
-	_RenderContext.context->IASetIndexBuffer(Mesh.IndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+	_RenderContext.context->IASetVertexBuffers(0, 1, MeshRes->Mesh.VertexBuffer.GetAddressOf(), &MeshRes->Mesh.VBStride, &MeshRes->Mesh.VBOffset);
+	_RenderContext.context->IASetIndexBuffer(MeshRes->Mesh.IndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 
 	//send world matrix to constant buffer and use local variable to not overwrite shared data
 	ConstantBuffer localCBufferData = *(_RenderContext.cbData);
@@ -68,7 +70,7 @@ void GeometryNode::Draw(RenderContext& _RenderContext)
 	_RenderContext.context->PSSetConstantBuffers(0, 1, &_RenderContext.constantBuffer);
 
 	//draw object
-	_RenderContext.context->DrawIndexed(Mesh.IndexCount, 0, 0);
+	_RenderContext.context->DrawIndexed(MeshRes->Mesh.IndexCount, 0, 0);
 
 	//Call logic from parent class, child nodes may be of different type
 	Node::Draw(_RenderContext);

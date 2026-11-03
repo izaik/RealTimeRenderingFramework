@@ -1,6 +1,8 @@
 #pragma once
 
 #include <wrl.h>
+#include "nlohmann/json.hpp"
+using json = nlohmann::json;
 #include "Node.h"
 #include "Structures.h"
 
@@ -13,5 +15,7 @@ public:
 	Scene();
 	virtual ~Scene() = default;
 
+	void LoadSceneFromJson(std::string SceneName);
 	void DrawScene(RenderContext _RenderContext);
 };
+

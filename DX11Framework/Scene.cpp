@@ -15,3 +15,12 @@ void Scene::DrawScene(RenderContext _RenderContext)
 	SceneRoot->UpdateWorldMatrix();
 	SceneRoot->Draw(_RenderContext);
 };
+
+void Scene::LoadSceneFromJson(std::string ScenePath) {
+	std::ifstream input_json(ScenePath);
+	json j;
+	input_json >> j;
+
+
+};
+

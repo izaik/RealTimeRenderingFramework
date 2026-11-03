@@ -6,6 +6,7 @@
 #include "OBJLoader.h"
 #include "Structures.h"
 #include "Resource.h"
+#include "ResourceManager.h"
 //https://webglfundamentals.org/webgl/lessons/webgl-scene-graph.html
 //https://developers.google.com/sceneform/reference/com/google/ar/sceneform/NodeParent
 //https://learnopengl.com/Guest-Articles/2021/Scene/Scene-Graph
@@ -17,12 +18,13 @@ class Node
 {
 	std::string Name;
 public:
+	ResourceManager* RM;
 	DirectX::XMFLOAT4X4 LocalMatrix;
 	DirectX::XMFLOAT4X4 WorldMatrix;
 	std::vector<std::unique_ptr<Node>> Children;
 	Node* Parent;
 
-	Node(std::string name);
+	Node(ResourceManager* RM, std::string name);
 	virtual ~Node() = default; //use destructor to stop memory leaks
 
 	template<typename T = Node, typename... TArgs>
@@ -31,26 +33,22 @@ public:
 		Children.back()->Parent = this;
 	};
 	void UpdateWorldMatrix();
-	//Node* FindNode(std::string name)
-	//{
-	//	// for each child
-	//		// if child name == name
-	//			return child_ptr.get()
-	//}
 	virtual void Draw(RenderContext& _RenderContext);
 };
 
 /*Class for objects using meshes and textures*/
 class GeometryNode : public Node {
-	TextureResource Diffuse;
-	TextureResource Specular;
-	MeshData Mesh;
+	std::string DiffName;
+	std::shared_ptr<TextureResource> Diffuse;
+	std::string SpecName;
+	std::shared_ptr<TextureResource> Specular;
+	std::string MeshName;
+	std::shared_ptr<MeshResource> MeshRes;
 
 public:
-	GeometryNode(std::string name,
-		TextureResource& diffuse,
-		TextureResource& specular,
-		const char* filepath, ComPtr<ID3D11Device>& device);
+	GeometryNode(ResourceManager* RM, std::string name,
+		std::string diffname, const char* diffpath, std::string specname, const char* specpath, std::string meshname, const char* meshpath, //there is probably a better way to do this
+		ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context) : Node(RM, name) { }
 
 	void Draw(RenderContext& _RenderContext) override;
 };

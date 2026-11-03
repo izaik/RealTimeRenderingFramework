@@ -55,6 +55,7 @@ class DX11Framework
 	ComPtr<ID3D11ShaderResourceView> _crateSpecularTex;
 
 	Scene _Scene;
+	ResourceManager _RM;
 
 	ConstantBuffer _cbData;
 
