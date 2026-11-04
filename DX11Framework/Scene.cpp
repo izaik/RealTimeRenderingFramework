@@ -6,10 +6,7 @@ T GetSafeValue(const nlohmann::json& jsonObject, const std::string& key, T defau
 	return jsonObject.contains(key) ? jsonObject[key].get<T>() : defaultValue;
 };
 
-Scene::Scene()
-{
-	SceneRoot = std::make_unique<Node>("SceneRoot");
-};
+Scene::Scene() {}; //Load scene from json will construct the scene
 
 void Scene::DrawScene(RenderContext _RenderContext)
 {
@@ -23,9 +20,37 @@ void Scene::DrawScene(RenderContext _RenderContext)
 	SceneRoot->Draw(_RenderContext);
 };
 
-void Scene::UpdateNodeTransformFromJson(const json& j, Node* n, float simpleCount) {
-	const auto& transform = GetSafeValue(j, "transform", NULL);
-	const auto& behavior = GetSafeValue(j, "behavior", NULL);
+void Scene::ParseNodeRecursive(const json& jNode, Node* parentNode, float simpleCount,
+	ResourceManager* rm, ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context) {
+	std::string name = GetSafeValue<std::string>(jNode, "name", "Node");
+	std::string type = GetSafeValue<std::string>(jNode, "type", "Node");
+
+	Node* currentNode = nullptr;
+
+	if (type == "GeometryNode") {
+		std::string diffPath = GetSafeValue<std::string>(jNode, "diffuse", "");
+		std::string specPath = GetSafeValue<std::string>(jNode, "specular", "");
+		std::string meshPath = GetSafeValue<std::string>(jNode, "mesh", "");
+
+		parentNode->AddChild<GeometryNode>(rm, name, diffPath.c_str(), specPath.c_str(), meshPath.c_str(), device, context);
+		currentNode = parentNode->Children.back().get();
+	}
+	// TODO: handle more node types here
+
+	// apply local transform from json
+	UpdateNodeTransformFromJson(jNode, currentNode, simpleCount);
+
+	// recursively read child nodes if present
+	if (jNode.contains("children") && jNode["children"].is_array()) {
+		for (const auto& jChild : jNode["children"]) {
+			ParseNodeRecursive(jChild, currentNode, simpleCount, rm, device, context);
+		}
+	}
+}
+
+void Scene::UpdateNodeTransformFromJson(const json& jNode, Node* currentNode, float simpleCount) {
+	const auto& transform = GetSafeValue(jNode, "transform", NULL);
+	const auto& behavior = GetSafeValue(jNode, "behavior", NULL);
 
 	//get base scale and translation vectors from json
 	XMVECTOR scale = XMVectorSet(transform["scale"]["x"], transform["scale"]["y"], transform["scale"]["z"], 0.0f);
@@ -41,6 +66,7 @@ void Scene::UpdateNodeTransformFromJson(const json& j, Node* n, float simpleCoun
 	float rotationSpeedYaw = GetSafeValue(behavior, "rotationSpeedYaw", NULL);
 	float rotationSpeedRoll = GetSafeValue(behavior, "rotationSpeedRoll", NULL);
 
+	// TODO: might need different logic to handle rotation that uses a continuously updated variable
 	float currentPitch = basePitch + (simpleCount * rotationSpeedPitch);
 	float currentYaw = baseYaw + (simpleCount * rotationSpeedYaw);
 	float currentRoll = baseRoll + (simpleCount * rotationSpeedRoll);
@@ -52,14 +78,24 @@ void Scene::UpdateNodeTransformFromJson(const json& j, Node* n, float simpleCoun
 		RotationMatrix *
 		XMMatrixTranslationFromVector(translation);
 
-	XMStoreFloat4x4(&n->LocalMatrix, LocalMatrix);
+	XMStoreFloat4x4(&currentNode->LocalMatrix, LocalMatrix);
 }
 
-void Scene::LoadSceneFromJson(std::string ScenePath) {
+void Scene::LoadSceneFromJson(std::string ScenePath, float simpleCount,
+	ResourceManager* rm, ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context) {
 	std::ifstream input_json(ScenePath);
+
 	json j;
 	input_json >> j;
 
+	//scene root node is created here
+	SceneRoot = std::make_unique<Node>(rm, "SceneRoot");
 
+	//the top level elements in the json are the top level nodes directly attached to the sceneroot
+	if (j.is_array()) {
+		for (const auto& jNode : j) {
+			ParseNodeRecursive(jNode, SceneRoot.get(), simpleCount, rm, device, context);
+		}
+	}
 };
 
