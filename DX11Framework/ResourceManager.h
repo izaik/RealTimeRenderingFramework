@@ -14,14 +14,14 @@ public:
 
 		auto it = ResourceCache.find(id);
 		if (it != ResourceCache.end()) {
-			return it->second; //return second from it because that is the value for the k : v pair
+			return std::static_pointer_cast<T>(it->second); //return second from it because that is the value for the k : v pair
 		}
 
 		else {
-			auto NewResource = std::make_shared<T>(std::forward<TArgs>args...); //calls constructor of Resource type and makes it a shared pointer
-			ResourceCache[id] = NewResource; //add new resource to map
+			auto NewResource = std::make_shared<T>(std::forward<TArgs>(args)...); //calls constructor of Resource type and makes it a shared pointer
+			ResourceCache.emplace(id, NewResource); //add new resource to map
 
-			return ResourceCache[id];
+			return std::static_pointer_cast<T>(NewResource);
 		}
 	}
 };

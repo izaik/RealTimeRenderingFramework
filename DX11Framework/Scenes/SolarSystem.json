@@ -3,7 +3,7 @@
     "name": "Sun",
     "type": "GeometryNode",
     "diffpath": "Textures/Crate_COLOR.dds",
-    "specpath": "Textures/Crate_SPEC",
+    "specpath": "Textures/Crate_SPEC.dds",
     "meshpath": "Models/Made In 3ds Max/sphere.obj",
     "transform": {
       "scale": {
@@ -30,13 +30,13 @@
         "name": "Earth",
         "type": "GeometryNode",
         "diffpath": "Textures/Crate_COLOR.dds",
-        "specpath": "Textures/Crate_SPEC",
+        "specpath": "Textures/Crate_SPEC.dds",
         "meshpath": "Models/Made In 3ds Max/sphere.obj",
         "transform": {
           "scale": {
-            "x": 1.0,
-            "y": 1.0,
-            "z": 1.0
+            "x": 0.5,
+            "y": 0.5,
+            "z": 0.5
           },
           "rotation": {
             "pitch": 0.0,
@@ -44,7 +44,7 @@
             "roll": 0.0
           },
           "position": {
-            "x": 0.0,
+            "x": 0.5,
             "y": 0.0,
             "z": 0.0
           }

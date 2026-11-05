@@ -14,14 +14,14 @@ public:
 	Resource();
 };
 
-class MeshResource : Resource {
+class MeshResource : public Resource {
 public:
 	MeshData Mesh;
 
 	MeshResource(const std::filesystem::path& filepath, ComPtr<ID3D11Device>& device);
 };
 
-class TextureResource : Resource {
+class TextureResource : public Resource {
 public:
 	ComPtr<ID3D11ShaderResourceView> Texture;
 

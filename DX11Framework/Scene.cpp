@@ -1,11 +1,5 @@
 #include "Scene.h"
 
-//validation function to safely get info from json
-template <typename T>
-T GetSafeValue(const nlohmann::json& jsonObject, const std::string& key, T defaultValue) {
-	return jsonObject.contains(key) ? jsonObject[key].get<T>() : defaultValue;
-};
-
 Scene::Scene() {}; //Load scene from json will construct the scene
 
 void Scene::DrawScene(RenderContext _RenderContext)
@@ -20,17 +14,21 @@ void Scene::DrawScene(RenderContext _RenderContext)
 	SceneRoot->Draw(_RenderContext);
 };
 
+void Scene::UpdateScene() {
+	SceneRoot->UpdateWorldMatrix();
+};
+
 void Scene::ParseNodeRecursive(const json& jNode, Node* parentNode, float simpleCount,
 	ResourceManager* rm, ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context) {
-	std::string name = GetSafeValue<std::string>(jNode, "name", "Node");
-	std::string type = GetSafeValue<std::string>(jNode, "type", "Node");
+	std::string name = jNode.value("name", "Node");
+	std::string type = jNode.value("type", "Node");
 
 	Node* currentNode = nullptr;
 
 	if (type == "GeometryNode") {
-		std::string diffPath = GetSafeValue<std::string>(jNode, "diffuse", "");
-		std::string specPath = GetSafeValue<std::string>(jNode, "specular", "");
-		std::string meshPath = GetSafeValue<std::string>(jNode, "mesh", "");
+		std::string diffPath = jNode.value("diffpath", "");
+		std::string specPath = jNode.value("specpath", "");
+		std::string meshPath = jNode.value("meshpath", "");
 
 		parentNode->AddChild<GeometryNode>(rm, name, diffPath.c_str(), specPath.c_str(), meshPath.c_str(), device, context);
 		currentNode = parentNode->Children.back().get();
@@ -42,29 +40,33 @@ void Scene::ParseNodeRecursive(const json& jNode, Node* parentNode, float simple
 
 	// recursively read child nodes if present
 	if (jNode.contains("children") && jNode["children"].is_array()) {
-		for (const auto& jChild : jNode["children"]) {
+		for (const json& jChild : jNode["children"]) {
 			ParseNodeRecursive(jChild, currentNode, simpleCount, rm, device, context);
 		}
 	}
 }
 
 void Scene::UpdateNodeTransformFromJson(const json& jNode, Node* currentNode, float simpleCount) {
-	const auto& transform = GetSafeValue(jNode, "transform", NULL);
-	const auto& behavior = GetSafeValue(jNode, "behavior", NULL);
+	json jTransform = jNode.value("transform", nlohmann::json::object());
+	json jBehavior = jNode.value("behavior", nlohmann::json::object());
+
+	json jScale = jTransform.value("scale", nlohmann::json::object());
+	json jTranslation = jTransform.value("position", nlohmann::json::object());
+	json jRotation = jTransform.value("rotation", nlohmann::json::object());
 
 	//get base scale and translation vectors from json
-	XMVECTOR scale = XMVectorSet(transform["scale"]["x"], transform["scale"]["y"], transform["scale"]["z"], 0.0f);
-	XMVECTOR translation = XMVectorSet(transform["translation"]["x"], transform["translation"]["y"], transform["translation"]["z"], 1.0f);
+	XMVECTOR scale = XMVectorSet(jScale["x"], jScale["y"], jScale["z"], 0.0f);
+	XMVECTOR translation = XMVectorSet(jTranslation["x"], jTranslation["y"], jTranslation["z"], 1.0f);
 
 	//get base rotation vectors from json
-	float basePitch = transform["rotation"]["pitch"];
-	float baseYaw = transform["rotation"]["yaw"];
-	float baseRoll = transform["rotation"]["roll"];
+	float basePitch = jRotation["pitch"];
+	float baseYaw = jRotation["yaw"];
+	float baseRoll = jRotation["roll"];
 
 	//get the speed of rotation
-	float rotationSpeedPitch = GetSafeValue(behavior, "rotationSpeedPitch", NULL);
-	float rotationSpeedYaw = GetSafeValue(behavior, "rotationSpeedYaw", NULL);
-	float rotationSpeedRoll = GetSafeValue(behavior, "rotationSpeedRoll", NULL);
+	float rotationSpeedPitch = jBehavior.value("rotationSpeedPitch", 0.0); 
+	float rotationSpeedYaw = jBehavior.value("rotationSpeedYaw", 0.0);
+	float rotationSpeedRoll = jBehavior.value("rotationSpeedRoll", 0.0);
 
 	// TODO: might need different logic to handle rotation that uses a continuously updated variable
 	float currentPitch = basePitch + (simpleCount * rotationSpeedPitch);

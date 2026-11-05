@@ -45,7 +45,7 @@ class GeometryNode : public Node {
 public:
 	GeometryNode(ResourceManager* RM, std::string name,
 		const char* diffpath, const char* specpath, const char* meshpath, //there is probably a better way to do this
-		ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context) : Node(RM, name) { }
+		ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context);
 
 	void Draw(RenderContext& _RenderContext) override;
 };
