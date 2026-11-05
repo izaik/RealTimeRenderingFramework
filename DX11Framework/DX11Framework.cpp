@@ -296,7 +296,7 @@ void DX11Framework::InitPipelineVariables()
 void DX11Framework::InitRunTimeData()
 {
     //Camera
-    XMFLOAT3 Eye = XMFLOAT3(0, 0, -10.0f);
+    XMFLOAT3 Eye = XMFLOAT3(0, 0, -8.0f);
     XMFLOAT3 At = XMFLOAT3(0, 0, 0);
     XMFLOAT3 Up = XMFLOAT3(0, 1, 0);
 
@@ -410,8 +410,6 @@ void DX11Framework::SetUpUI() const
 
     ImGui::Begin("Simple Metrics");
     ImGui::Text("Time since start: %.3f", simpleCount);
-    float angle = XMConvertToDegrees(userRotate);
-    ImGui::Text("Square Z rotation: %.0f°", std::fmod(angle, 360.f));
     ImGui::End();
 }
 

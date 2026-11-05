@@ -8,6 +8,8 @@ class ResourceManager {
 
 	std::hash<std::string> hasher;
 public:
+	ResourceManager();
+
 	template<typename T = Resource, typename... TArgs>
 	std::shared_ptr<T> GetResource(std::string ResourcePath, TArgs&& ...args) {
 		size_t id = hasher(ResourcePath);

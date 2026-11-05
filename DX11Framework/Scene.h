@@ -5,6 +5,7 @@
 using json = nlohmann::json;
 #include "Node.h"
 #include "Structures.h"
+#include "ResourceManager.h"
 
 using Microsoft::WRL::ComPtr;
 

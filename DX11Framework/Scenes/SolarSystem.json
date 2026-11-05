@@ -44,15 +44,44 @@
             "roll": 0.0
           },
           "position": {
-            "x": 0.5,
+            "x": 3.0,
             "y": 0.0,
-            "z": 0.0
+            "z": 0.5
           }
         },
         "behavior": {
           "rotationSpeedYaw": 0.2
         },
-        "children": []
+        "children": [
+          {
+            "name": "Moon",
+            "type": "GeometryNode",
+            "diffpath": "Textures/Crate_COLOR.dds",
+            "specpath": "Textures/Crate_SPEC.dds",
+            "meshpath": "Models/Made In 3ds Max/sphere.obj",
+            "transform": {
+              "scale": {
+                "x": 0.2,
+                "y": 0.2,
+                "z": 0.2
+              },
+              "rotation": {
+                "pitch": 0.0,
+                "yaw": 0.0,
+                "roll": 0.0
+              },
+              "position": {
+                "x": 1.5,
+                "y": 0.0,
+                "z": 0.0
+              }
+            },
+            "behavior": {
+              "rotationSpeedYaw": 0.2
+            },
+            "children": []
+          }
+        ]
       }
     ]
   }

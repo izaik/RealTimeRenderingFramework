@@ -24,7 +24,7 @@ public:
 	std::vector<std::unique_ptr<Node>> Children;
 	Node* Parent;
 
-	Node(ResourceManager* RM, std::string name);
+	Node(ResourceManager* rm, std::string name);
 	virtual ~Node() = default; //use destructor to stop memory leaks
 
 	template<typename T = Node, typename... TArgs>

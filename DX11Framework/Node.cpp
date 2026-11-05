@@ -1,6 +1,7 @@
 #include "Node.h"
 
-Node::Node(ResourceManager* RM, std::string name) {
+Node::Node(ResourceManager* rm, std::string name) {
+	RM = rm;
 	Name = name;
 	XMStoreFloat4x4(&LocalMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&WorldMatrix, XMMatrixIdentity());
@@ -14,6 +15,8 @@ void Node::UpdateWorldMatrix() {
 		XMMATRIX parentMat = XMLoadFloat4x4(&this->Parent->WorldMatrix);
 
 		XMStoreFloat4x4(&WorldMatrix, localMat * parentMat);
+
+		// TODO: if object as flag/behavior to continuously rotate, update it here with 
 	}
 	else {
 		//if no parent exists use object localmatrix (should only be scene root node)
