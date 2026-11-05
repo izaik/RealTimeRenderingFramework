@@ -21,8 +21,12 @@ public:
 	ResourceManager* RM;
 	DirectX::XMFLOAT4X4 LocalMatrix;
 	DirectX::XMFLOAT4X4 WorldMatrix;
+	
 	std::vector<std::unique_ptr<Node>> Children;
 	Node* Parent;
+	
+	bool ContinuousRotation = 0;
+	DirectX::XMFLOAT4X4 ContinuousRotationMatrix;
 
 	Node(ResourceManager* rm, std::string name);
 	virtual ~Node() = default; //use destructor to stop memory leaks
@@ -32,7 +36,7 @@ public:
 		Children.push_back(std::make_unique<T>(std::forward<TArgs>(args)...)); //use T instead of Node so it can be derived class too and use forward to turn any rvalues back to rvalues
 		Children.back()->Parent = this;
 	};
-	void UpdateWorldMatrix();
+	void UpdateWorldMatrix(float simpleCount);
 	virtual void Draw(RenderContext& _RenderContext);
 };
 

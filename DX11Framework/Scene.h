@@ -22,6 +22,6 @@ public:
 	void LoadSceneFromJson(std::string SceneName, float simpleCount,
 		ResourceManager* rm, ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context);
 	void DrawScene(RenderContext _RenderContext);
-	void UpdateScene();
+	void UpdateScene(float simpleCount);
 };
 

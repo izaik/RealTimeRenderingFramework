@@ -351,9 +351,8 @@ void DX11Framework::Update()
 
     _cbData.timeSinceStart = simpleCount;
 
-
     //Update Scene here
-    _Scene.UpdateScene();
+    _Scene.UpdateScene(simpleCount);
 
     if (_keys[SCANCODE_TAB])
     {

@@ -10,12 +10,12 @@ void Scene::DrawScene(RenderContext _RenderContext)
 		return;
 	}
 
-	SceneRoot->UpdateWorldMatrix();
+	//SceneRoot->UpdateWorldMatrix(simpleCount);
 	SceneRoot->Draw(_RenderContext);
 };
 
-void Scene::UpdateScene() {
-	SceneRoot->UpdateWorldMatrix();
+void Scene::UpdateScene(float simpleCount) {
+	SceneRoot->UpdateWorldMatrix(simpleCount);
 };
 
 void Scene::ParseNodeRecursive(const json& jNode, Node* parentNode, float simpleCount,
@@ -59,21 +59,24 @@ void Scene::UpdateNodeTransformFromJson(const json& jNode, Node* currentNode, fl
 	XMVECTOR translation = XMVectorSet(jTranslation["x"], jTranslation["y"], jTranslation["z"], 1.0f);
 
 	//get base rotation vectors from json
-	float basePitch = jRotation["pitch"];
-	float baseYaw = jRotation["yaw"];
-	float baseRoll = jRotation["roll"];
+	float basePitch = DirectX::XMConvertToRadians(jRotation["pitch"]);
+	float baseYaw = DirectX::XMConvertToRadians(jRotation["yaw"]);
+	float baseRoll = DirectX::XMConvertToRadians(jRotation["roll"]);
 
-	//get the speed of rotation
-	float rotationSpeedPitch = jBehavior.value("rotationSpeedPitch", 0.0); 
-	float rotationSpeedYaw = jBehavior.value("rotationSpeedYaw", 0.0);
-	float rotationSpeedRoll = jBehavior.value("rotationSpeedRoll", 0.0);
+	// TODO: If statement to set flag on node to rotate
+	if (!jRotation.empty()) {
+		// get the speed of rotation
+		float rotationSpeedPitch = DirectX::XMConvertToRadians(jBehavior.value("rotationSpeedPitch", 0.0));
+		float rotationSpeedYaw = DirectX::XMConvertToRadians(jBehavior.value("rotationSpeedYaw", 0.0));
+		float rotationSpeedRoll = DirectX::XMConvertToRadians(jBehavior.value("rotationSpeedRoll", 0.0));
 
-	// TODO: might need different logic to handle rotation that uses a continuously updated variable
-	float currentPitch = basePitch + (simpleCount * rotationSpeedPitch);
-	float currentYaw = baseYaw + (simpleCount * rotationSpeedYaw);
-	float currentRoll = baseRoll + (simpleCount * rotationSpeedRoll);
+		currentNode->ContinuousRotation = 1;
+		XMMATRIX ContinuousRotationMatrix = XMMatrixRotationRollPitchYaw(rotationSpeedPitch, rotationSpeedYaw, rotationSpeedRoll);
+		// TODO: might need different logic to handle rotation that uses a continuously updated variable
+		XMStoreFloat4x4(&currentNode->ContinuousRotationMatrix, ContinuousRotationMatrix);
+	}
 
-	XMMATRIX RotationMatrix = XMMatrixRotationRollPitchYaw(currentPitch, currentYaw, currentRoll);
+	XMMATRIX RotationMatrix = XMMatrixRotationRollPitchYaw(basePitch, baseYaw, baseRoll);
 
 	XMMATRIX LocalMatrix =
 		XMMatrixScalingFromVector(scale) *

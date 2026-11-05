@@ -8,15 +8,20 @@ Node::Node(ResourceManager* rm, std::string name) {
 	Parent = nullptr;
 }
 
-void Node::UpdateWorldMatrix() {
+void Node::UpdateWorldMatrix(float simpleCount) {
 	XMMATRIX localMat = XMLoadFloat4x4(&LocalMatrix);
 
 	if (Parent != nullptr) {
 		XMMATRIX parentMat = XMLoadFloat4x4(&this->Parent->WorldMatrix);
 
+		if (this->ContinuousRotation) {
+			XMMATRIX rotMatrix = XMLoadFloat4x4(&this->ContinuousRotationMatrix);
+			localMat *= (XMMatrixRotationRollPitchYaw()); //TODO: get roll pitch and yaw amounts from json (fed to node?)
+		}
+
 		XMStoreFloat4x4(&WorldMatrix, localMat * parentMat);
 
-		// TODO: if object as flag/behavior to continuously rotate, update it here with 
+		
 	}
 	else {
 		//if no parent exists use object localmatrix (should only be scene root node)
@@ -25,7 +30,7 @@ void Node::UpdateWorldMatrix() {
 	//propagate down to all child and sub child nodes
 	for (auto& Child: Children) {
 		if (Child != nullptr) {
-			Child->UpdateWorldMatrix();
+			Child->UpdateWorldMatrix(simpleCount);
 		}
 	}
 }

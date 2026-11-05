@@ -23,7 +23,6 @@
       }
     },
     "behavior": {
-      "rotationSpeedYaw": 0.2
     },
     "children": [
       {
@@ -50,7 +49,6 @@
           }
         },
         "behavior": {
-          "rotationSpeedYaw": 0.2
         },
         "children": [
           {
@@ -77,7 +75,6 @@
               }
             },
             "behavior": {
-              "rotationSpeedYaw": 0.2
             },
             "children": []
           }
