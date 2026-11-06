@@ -7,6 +7,7 @@ using json = nlohmann::json;
 #include "Structures.h"
 #include "ResourceManager.h"
 
+using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
 class Scene {

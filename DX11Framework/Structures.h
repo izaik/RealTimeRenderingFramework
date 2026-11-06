@@ -3,7 +3,6 @@
 #include <d3d11_4.h>
 #include <DirectXMath.h>
 #include <wrl.h>
-#include <string>
 
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;

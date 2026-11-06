@@ -3,16 +3,19 @@
 #include <vector>
 #include <memory>
 #include <algorithm>
+#include <wrl.h>
 #include "OBJLoader.h"
 #include "Structures.h"
 #include "Resource.h"
 #include "ResourceManager.h"
+
+using namespace DirectX;
+using Microsoft::WRL::ComPtr;
+
 //https://webglfundamentals.org/webgl/lessons/webgl-scene-graph.html
 //https://developers.google.com/sceneform/reference/com/google/ar/sceneform/NodeParent
 //https://learnopengl.com/Guest-Articles/2021/Scene/Scene-Graph
 //https://docs.unity.com/en-us/engine/6000.6/manual/working-with-gameobjects/game-objects
-
-using Microsoft::WRL::ComPtr;
 
 class Node
 {

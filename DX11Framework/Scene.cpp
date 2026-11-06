@@ -66,14 +66,14 @@ void Scene::UpdateNodeTransformFromJson(const json& jNode, Node* currentNode) {
 	// handle special behaviors
 	if (!jBehavior.empty()) {
 		if (!jBehavior["rotateContinuous"].empty()) {
-			json jRotateContinuous = jNode.value("rotateContinuous", nlohmann::json::object());
+			json jRotateContinuous = jBehavior.value("rotateContinuous", nlohmann::json::object());
 			// get the speed of rotation
-			float rotationSpeedPitch = DirectX::XMConvertToRadians(jRotateContinuous.value("rotationSpeedPitch", 0.0));
-			float rotationSpeedYaw = DirectX::XMConvertToRadians(jRotateContinuous.value("rotationSpeedYaw", 0.0));
-			float rotationSpeedRoll = DirectX::XMConvertToRadians(jRotateContinuous.value("rotationSpeedRoll", 0.0));
+			float rotationSpeedPitch = DirectX::XMConvertToRadians(jRotateContinuous.value("rotationSpeedPitch", 0.0f));
+			float rotationSpeedYaw = DirectX::XMConvertToRadians(jRotateContinuous.value("rotationSpeedYaw", 0.0f));
+			float rotationSpeedRoll = DirectX::XMConvertToRadians(jRotateContinuous.value("rotationSpeedRoll", 0.0f));
 
 			currentNode->ContinuousRotation = 1; //set flag on node
-			XMVECTOR ContinuousRotationVector = XMVectorSet(rotationSpeedPitch, rotationSpeedYaw, rotationSpeedRoll, 0.0);
+			XMVECTOR ContinuousRotationVector = XMVectorSet(rotationSpeedPitch, rotationSpeedYaw, rotationSpeedRoll, 0.0f);
 			XMStoreFloat4(&currentNode->ContinuousRotationVector, ContinuousRotationVector);
 		}
 	}

@@ -6,6 +6,7 @@
 #include "OBJLoader.h"
 #include "DDSTextureLoader/DDSTextureLoader.h"
 
+using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
 //Empty class used as base

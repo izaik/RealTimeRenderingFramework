@@ -14,7 +14,6 @@
 #include "Node.h"
 #include "Scene.h"
 
-
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
