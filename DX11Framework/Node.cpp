@@ -5,6 +5,7 @@ Node::Node(ResourceManager* rm, std::string name) {
 	Name = name;
 	XMStoreFloat4x4(&LocalMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&WorldMatrix, XMMatrixIdentity());
+	XMStoreFloat4(&ContinuousRotationVector, XMVectorZero()); //initialise as empty
 	Parent = nullptr;
 }
 
@@ -15,10 +16,11 @@ void Node::UpdateWorldMatrix(float simpleCount) {
 		XMMATRIX parentMat = XMLoadFloat4x4(&this->Parent->WorldMatrix);
 
 		if (this->ContinuousRotation) {
-			XMMATRIX rotMatrix = XMLoadFloat4x4(&this->ContinuousRotationMatrix);
-			localMat *= (XMMatrixRotationRollPitchYaw()); //TODO: get roll pitch and yaw amounts from json (fed to node?)
+			localMat *= (XMMatrixRotationRollPitchYaw(
+				simpleCount * ContinuousRotationVector.x, 
+				simpleCount * ContinuousRotationVector.y, 
+				simpleCount * ContinuousRotationVector.z));
 		}
-
 		XMStoreFloat4x4(&WorldMatrix, localMat * parentMat);
 
 		

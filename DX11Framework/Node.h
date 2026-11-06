@@ -26,7 +26,7 @@ public:
 	Node* Parent;
 	
 	bool ContinuousRotation = 0;
-	DirectX::XMFLOAT4X4 ContinuousRotationMatrix;
+	DirectX::XMFLOAT4 ContinuousRotationVector;
 
 	Node(ResourceManager* rm, std::string name);
 	virtual ~Node() = default; //use destructor to stop memory leaks

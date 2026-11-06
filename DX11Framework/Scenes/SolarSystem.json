@@ -11,7 +11,7 @@
         "y": 1.0,
         "z": 1.0
       },
-      "rotation": {
+      "orientation": {
         "pitch": 0.0,
         "yaw": 0.0,
         "roll": 0.0
@@ -23,6 +23,9 @@
       }
     },
     "behavior": {
+      "rotateContinuous": {
+        "rotationSpeedYaw": 15.0
+      }
     },
     "children": [
       {
@@ -37,7 +40,7 @@
             "y": 0.5,
             "z": 0.5
           },
-          "rotation": {
+          "orientation": {
             "pitch": 0.0,
             "yaw": 0.0,
             "roll": 0.0
@@ -49,6 +52,9 @@
           }
         },
         "behavior": {
+          "rotateContinuous": {
+            "rotationSpeedYaw": 25.0
+          }
         },
         "children": [
           {
@@ -63,7 +69,7 @@
                 "y": 0.2,
                 "z": 0.2
               },
-              "rotation": {
+              "orientation": {
                 "pitch": 0.0,
                 "yaw": 0.0,
                 "roll": 0.0
@@ -75,6 +81,9 @@
               }
             },
             "behavior": {
+              "rotateContinuous": {
+                "rotationSpeedYaw": 45.0
+              }      
             },
             "children": []
           }

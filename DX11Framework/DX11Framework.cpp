@@ -327,7 +327,7 @@ void DX11Framework::InitRunTimeData()
     _loadedLight.Specular = XMFLOAT4(j["Specular"][0], j["Specular"][1], j["Specular"][2], j["Specular"][3]);
     _loadedLight.Direction = XMFLOAT3(j["Direction"][0], j["Direction"][1], j["Direction"][2]);
 
-    _Scene.LoadSceneFromJson("Scenes/SolarSystem.json", simpleCount, &_RM, _device, _immediateContext);
+    _Scene.LoadSceneFromJson("Scenes/SolarSystem.json", &_RM, _device, _immediateContext);
 
 }
 

@@ -16,10 +16,10 @@ public:
 	Scene();
 	virtual ~Scene() = default;
 
-	void ParseNodeRecursive(const json& jNode, Node* parentNode, float simpleCount,
+	void ParseNodeRecursive(const json& jNode, Node* parentNode,
 		ResourceManager* rm, ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context);
-	void UpdateNodeTransformFromJson(const json& jNode, Node* currentNode, float simpleCount);
-	void LoadSceneFromJson(std::string SceneName, float simpleCount,
+	void UpdateNodeTransformFromJson(const json& jNode, Node* currentNode);
+	void LoadSceneFromJson(std::string SceneName,
 		ResourceManager* rm, ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context);
 	void DrawScene(RenderContext _RenderContext);
 	void UpdateScene(float simpleCount);
