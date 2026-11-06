@@ -17,6 +17,7 @@ class Camera {
 	float aspect;
 
 	Camera();
+	void Update(XMFLOAT4X4& viewMatrix);
 };
 
 
