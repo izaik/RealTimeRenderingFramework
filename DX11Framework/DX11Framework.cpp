@@ -362,6 +362,10 @@ void DX11Framework::Update()
     {
         _immediateContext->RSSetState(_fillState.Get());
     }
+
+    if (_keys[SCANCODE_W]) {
+        //TODO: move cam forward
+    }
 }
 
 void DX11Framework::Draw()
