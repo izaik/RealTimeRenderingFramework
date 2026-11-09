@@ -294,35 +294,9 @@ void DX11Framework::Update()
     simpleCount += deltaTime;
     _cbData.timeSinceStart = simpleCount;
 
-    //Update Camera
     _camera->Update();
-
-    //Update Scene here
     _Scene.UpdateScene(simpleCount);
-
     _userInput.ProcessInput(_immediateContext, _wireframeState, _fillState, _camera, deltaTime);
-    //Process Keyboard Input
-    //if (_keys[SCANCODE_TAB])
-    //{
-    //    _immediateContext->RSSetState(_wireframeState.Get());
-    //}
-    //else
-    //{
-    //    _immediateContext->RSSetState(_fillState.Get());
-    //}
-    //
-    //if (_keys[SCANCODE_W]) {
-    //    _camera->ProcessKeyboardInput(FORWARD, deltaTime);
-    //}
-    //if (_keys[SCANCODE_D]) {
-    //    _camera->ProcessKeyboardInput(RIGHT, deltaTime);
-    //}
-    //if (_keys[SCANCODE_S]) {
-    //    _camera->ProcessKeyboardInput(BACKWARD, deltaTime);
-    //}
-    //if (_keys[SCANCODE_A]) {
-    //    _camera->ProcessKeyboardInput(LEFT, deltaTime);
-    //}
 }
 
 void DX11Framework::Draw()

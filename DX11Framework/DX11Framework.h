@@ -58,12 +58,8 @@ class DX11Framework
 
 	ConstantBuffer _cbData;
 
-	std::array<bool, SCANCODE_COUNT> _keys;
-
 	float simpleCount = 0;
 	float deltaTime = 0;
-
-	float userRotate = 0;
 
 public:
 	void Initialise(HINSTANCE hInstance, int nCmdShow);
