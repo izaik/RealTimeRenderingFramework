@@ -172,6 +172,7 @@
     <ClCompile Include="Resource.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="UserInput.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="SimpleShaders.hlsl">
@@ -204,6 +205,7 @@
     <ClInclude Include="ScanCode.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Structures.h" />
+    <ClInclude Include="UserInput.h" />
     <ClInclude Include="Util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

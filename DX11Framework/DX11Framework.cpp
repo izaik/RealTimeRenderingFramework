@@ -6,59 +6,6 @@
 #include "nlohmann/json.hpp"
 using json = nlohmann::json;
 
-LRESULT DX11Framework::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
-{
-    switch (message)
-    {
-    case WM_KEYDOWN:
-        DX11Framework::OnKeyDown(lParam);
-        return 0;
-
-    case WM_KEYUP:
-        DX11Framework::OnKeyUp(lParam);
-        return 0;
-
-    case WM_DESTROY:
-        PostQuitMessage(0);
-        return 0;
-    }
-
-    // Handle any messages the switch statement didn't.
-    return DefWindowProc(hWnd, message, wParam, lParam);
-}
-
-void DX11Framework::OnKeyDown(LPARAM lParam)
-{
-    WORD keyFlags = HIWORD(lParam);
-
-    WORD scanCode = LOBYTE(keyFlags);
-    BOOL isExtendedKey = (keyFlags & KF_EXTENDED) == KF_EXTENDED;
-
-    if (isExtendedKey)
-        scanCode = MAKEWORD(scanCode, 0xE0);
-
-    uint8_t index = LOBYTE(scanCode);
-    if (HIBYTE(scanCode)) index |= 0x80;
-
-    _keys[windows_scancode_table[index]] = true;
-}
-
-void DX11Framework::OnKeyUp(LPARAM lparam)
-{
-    WORD keyFlags = HIWORD(lparam);
-
-    WORD scanCode = LOBYTE(keyFlags);
-    BOOL isExtendedKey = (keyFlags & KF_EXTENDED) == KF_EXTENDED;
-
-    if (isExtendedKey)
-        scanCode = MAKEWORD(scanCode, 0xE0);
-
-    uint8_t index = LOBYTE(scanCode);
-    if (HIBYTE(scanCode)) index |= 0x80;
-
-    _keys[windows_scancode_table[index]] = false;
-}
-
 void DX11Framework::Initialise(HINSTANCE hInstance, int nShowCmd)
 {
     CreateWindowHandle(hInstance, nShowCmd);
@@ -295,21 +242,6 @@ void DX11Framework::InitPipelineVariables()
 
 void DX11Framework::InitRunTimeData()
 {
-    //Camera
-    //XMFLOAT3 Eye = XMFLOAT3(0, 0, -8.0f);
-    //XMFLOAT3 At = XMFLOAT3(0, 0, 0);
-    //XMFLOAT3 Up = XMFLOAT3(0, 1, 0);
-    //
-    //XMStoreFloat4x4(&_View, XMMatrixLookAtLH(XMLoadFloat3(&Eye), XMLoadFloat3(&At), XMLoadFloat3(&Up)));
-    //
-    ////Projection
-    //float aspect = _viewport.Width / _viewport.Height;
-    //XMMATRIX perspective = XMMatrixPerspectiveFovLH(XMConvertToRadians(90), aspect, 0.01f, 100.0f);
-    //XMStoreFloat4x4(&_Projection, perspective);
-    //
-    ////store camera position for phong
-    //
-
     // New Camera stuff here
     float aspect = _viewport.Width / _viewport.Height;
     _camera = new Camera(aspect);
@@ -368,28 +300,29 @@ void DX11Framework::Update()
     //Update Scene here
     _Scene.UpdateScene(simpleCount);
 
+    _userInput.ProcessInput(_immediateContext, _wireframeState, _fillState, _camera, deltaTime);
     //Process Keyboard Input
-    if (_keys[SCANCODE_TAB])
-    {
-        _immediateContext->RSSetState(_wireframeState.Get());
-    }
-    else
-    {
-        _immediateContext->RSSetState(_fillState.Get());
-    }
-
-    if (_keys[SCANCODE_W]) {
-        _camera->ProcessKeyboardInput(FORWARD, deltaTime);
-    }
-    if (_keys[SCANCODE_D]) {
-        _camera->ProcessKeyboardInput(RIGHT, deltaTime);
-    }
-    if (_keys[SCANCODE_S]) {
-        _camera->ProcessKeyboardInput(BACKWARD, deltaTime);
-    }
-    if (_keys[SCANCODE_A]) {
-        _camera->ProcessKeyboardInput(LEFT, deltaTime);
-    }
+    //if (_keys[SCANCODE_TAB])
+    //{
+    //    _immediateContext->RSSetState(_wireframeState.Get());
+    //}
+    //else
+    //{
+    //    _immediateContext->RSSetState(_fillState.Get());
+    //}
+    //
+    //if (_keys[SCANCODE_W]) {
+    //    _camera->ProcessKeyboardInput(FORWARD, deltaTime);
+    //}
+    //if (_keys[SCANCODE_D]) {
+    //    _camera->ProcessKeyboardInput(RIGHT, deltaTime);
+    //}
+    //if (_keys[SCANCODE_S]) {
+    //    _camera->ProcessKeyboardInput(BACKWARD, deltaTime);
+    //}
+    //if (_keys[SCANCODE_A]) {
+    //    _camera->ProcessKeyboardInput(LEFT, deltaTime);
+    //}
 }
 
 void DX11Framework::Draw()

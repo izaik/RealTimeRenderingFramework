@@ -11,6 +11,7 @@
 #include "OBJLoader.h"
 #include "DDSTextureLoader/DDSTextureLoader.h"
 #include "Structures.h"
+#include "UserInput.h"
 #include "Node.h"
 #include "Scene.h"
 #include "Camera.h"
@@ -20,8 +21,8 @@ using Microsoft::WRL::ComPtr;
 
 class DX11Framework
 {
-	int _WindowWidth = 1280;
-	int _WindowHeight = 768;
+	int _WindowWidth = 1920;
+	int _WindowHeight = 1080;
 
 	ComPtr<ID3D11DeviceContext> _immediateContext;
 	ComPtr<ID3D11Device> _device;
@@ -75,12 +76,9 @@ public:
 	void InitRunTimeData();
 	void InitImGui();
 
-	void OnKeyDown(LPARAM lparam);
-	void OnKeyUp(LPARAM lparam);
+	UserInput _userInput;
 
 	~DX11Framework();
-
-	LRESULT HandleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 	void Update();
 	void Draw();

@@ -33,5 +33,5 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 
     //If not creating, we should have already stored the correct instance pointer, so now get it and call it
     application = reinterpret_cast<DX11Framework*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-    return application->HandleMessage(hWnd, message, wParam, lParam);
+    return application->_userInput.HandleMessage(hWnd, message, wParam, lParam);
 }
