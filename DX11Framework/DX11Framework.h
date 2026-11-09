@@ -13,6 +13,7 @@
 #include "Structures.h"
 #include "Node.h"
 #include "Scene.h"
+#include "Camera.h"
 
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
@@ -49,9 +50,7 @@ class DX11Framework
 	Material _defaultMaterial;
 	Light _loadedLight;
 
-	
-	ComPtr<ID3D11ShaderResourceView> _crateDiffuseTex;
-	ComPtr<ID3D11ShaderResourceView> _crateSpecularTex;
+	Camera* _camera;
 
 	Scene _Scene;
 	ResourceManager _RM;

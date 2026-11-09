@@ -296,19 +296,27 @@ void DX11Framework::InitPipelineVariables()
 void DX11Framework::InitRunTimeData()
 {
     //Camera
-    XMFLOAT3 Eye = XMFLOAT3(0, 0, -8.0f);
-    XMFLOAT3 At = XMFLOAT3(0, 0, 0);
-    XMFLOAT3 Up = XMFLOAT3(0, 1, 0);
+    //XMFLOAT3 Eye = XMFLOAT3(0, 0, -8.0f);
+    //XMFLOAT3 At = XMFLOAT3(0, 0, 0);
+    //XMFLOAT3 Up = XMFLOAT3(0, 1, 0);
+    //
+    //XMStoreFloat4x4(&_View, XMMatrixLookAtLH(XMLoadFloat3(&Eye), XMLoadFloat3(&At), XMLoadFloat3(&Up)));
+    //
+    ////Projection
+    //float aspect = _viewport.Width / _viewport.Height;
+    //XMMATRIX perspective = XMMatrixPerspectiveFovLH(XMConvertToRadians(90), aspect, 0.01f, 100.0f);
+    //XMStoreFloat4x4(&_Projection, perspective);
+    //
+    ////store camera position for phong
+    //
 
-    XMStoreFloat4x4(&_View, XMMatrixLookAtLH(XMLoadFloat3(&Eye), XMLoadFloat3(&At), XMLoadFloat3(&Up)));
-
-    //Projection
+    // New Camera stuff here
     float aspect = _viewport.Width / _viewport.Height;
-    XMMATRIX perspective = XMMatrixPerspectiveFovLH(XMConvertToRadians(90), aspect, 0.01f, 100.0f);
-    XMStoreFloat4x4(&_Projection, perspective);
-
-    //store camera position for phong
-    _cbData.camPos = Eye;
+    _camera = new Camera(aspect);
+    
+    _View = _camera->GetView();
+    _Projection = _camera->GetPerspective();
+    _cbData.camPos = _camera->GetPosition();
 
     //Materials & Lights
     _defaultMaterial.Diffuse = XMFLOAT4(0.75164f, 0.60648f, 0.22648f, 1.0f);
@@ -333,6 +341,10 @@ void DX11Framework::InitRunTimeData()
 
 DX11Framework::~DX11Framework()
 {
+    // clean up camera when rendering stops
+    delete _camera;
+    _camera = nullptr;
+
     ImGui_ImplDX11_Shutdown();
     ImGui_ImplWin32_Shutdown();
     ImGui::DestroyContext();
@@ -348,12 +360,15 @@ void DX11Framework::Update()
     frameStart = frameNow;
 
     simpleCount += deltaTime;
-
     _cbData.timeSinceStart = simpleCount;
+
+    //Update Camera
+    _camera->Update();
 
     //Update Scene here
     _Scene.UpdateScene(simpleCount);
 
+    //Process Keyboard Input
     if (_keys[SCANCODE_TAB])
     {
         _immediateContext->RSSetState(_wireframeState.Get());
@@ -364,7 +379,16 @@ void DX11Framework::Update()
     }
 
     if (_keys[SCANCODE_W]) {
-        //TODO: move cam forward
+        _camera->ProcessKeyboardInput(FORWARD, deltaTime);
+    }
+    if (_keys[SCANCODE_D]) {
+        _camera->ProcessKeyboardInput(RIGHT, deltaTime);
+    }
+    if (_keys[SCANCODE_S]) {
+        _camera->ProcessKeyboardInput(BACKWARD, deltaTime);
+    }
+    if (_keys[SCANCODE_A]) {
+        _camera->ProcessKeyboardInput(LEFT, deltaTime);
     }
 }
 
@@ -378,6 +402,10 @@ void DX11Framework::Draw()
     _immediateContext->ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
     _immediateContext->ClearRenderTargetView(_frameBufferView.Get(), backgroundColor);
   
+    //get view and projection matrices from camera
+    _View = _camera->GetView();
+    _Projection = _camera->GetPerspective();
+
     //Store this frames data in constant buffer struct
     _cbData.World = XMMatrixTranspose(XMLoadFloat4x4(&_World));
     _cbData.View = XMMatrixTranspose(XMLoadFloat4x4(&_View));
