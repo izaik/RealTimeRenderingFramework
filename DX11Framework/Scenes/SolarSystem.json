@@ -4,6 +4,7 @@
     "type": "GeometryNode",
     "diffpath": "Textures/Crate_COLOR.dds",
     "specpath": "Textures/Crate_SPEC.dds",
+    "shininess":  32.0,
     "meshpath": "Models/Made In 3ds Max/sphere.obj",
     "transform": {
       "scale": {
@@ -33,6 +34,7 @@
         "type": "GeometryNode",
         "diffpath": "Textures/Crate_COLOR.dds",
         "specpath": "Textures/Crate_SPEC.dds",
+        "shininess": 32.0,
         "meshpath": "Models/Made In 3ds Max/sphere.obj",
         "transform": {
           "scale": {
@@ -62,6 +64,7 @@
             "type": "GeometryNode",
             "diffpath": "Textures/Crate_COLOR.dds",
             "specpath": "Textures/Crate_SPEC.dds",
+            "shininess": 32.0,
             "meshpath": "Models/Made In 3ds Max/sphere.obj",
             "transform": {
               "scale": {
@@ -83,7 +86,7 @@
             "behavior": {
               "rotateContinuous": {
                 "rotationSpeedYaw": 45.0
-              }      
+              }
             },
             "children": []
           }

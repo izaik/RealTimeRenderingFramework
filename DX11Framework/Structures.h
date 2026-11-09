@@ -33,7 +33,6 @@ struct Material
 	XMFLOAT4 Diffuse;
 	XMFLOAT4 Ambient;
 	XMFLOAT4 Specular;
-	float Shininess;
 };
 
 struct Light
@@ -49,8 +48,8 @@ struct ConstantBuffer
 	XMMATRIX Projection;
 	XMMATRIX View;
 	XMMATRIX World;
-	Material mat;
 	XMFLOAT3 camPos;
+	float Shininess;
 	Light light;
 	float timeSinceStart;
 };

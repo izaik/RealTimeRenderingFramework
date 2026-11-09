@@ -47,11 +47,12 @@ public:
 class GeometryNode : public Node {
 	std::shared_ptr<TextureResource> Diffuse;
 	std::shared_ptr<TextureResource> Specular;
+	float Shininess = 128.0f;
 	std::shared_ptr<MeshResource> MeshRes;
 
 public:
 	GeometryNode(ResourceManager* RM, std::string name,
-		const char* diffpath, const char* specpath, const char* meshpath, //there is probably a better way to do this
+		const char* diffpath, const char* specpath, float shininess, const char* meshpath, //there is probably a better way to do this
 		ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context);
 
 	void Draw(RenderContext& _RenderContext) override;

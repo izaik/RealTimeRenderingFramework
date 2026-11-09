@@ -28,9 +28,10 @@ void Scene::ParseNodeRecursive(const json& jNode, Node* parentNode,
 	if (type == "GeometryNode") {
 		std::string diffPath = jNode.value("diffpath", "");
 		std::string specPath = jNode.value("specpath", "");
+		float shininess = jNode.value("shininess", 0.0f);
 		std::string meshPath = jNode.value("meshpath", "");
 
-		parentNode->AddChild<GeometryNode>(rm, name, diffPath.c_str(), specPath.c_str(), meshPath.c_str(), device, context);
+		parentNode->AddChild<GeometryNode>(rm, name, diffPath.c_str(), specPath.c_str(), shininess, meshPath.c_str(), device, context);
 		currentNode = parentNode->Children.back().get();
 	}
 	// TODO: handle more node types here

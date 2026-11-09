@@ -250,13 +250,6 @@ void DX11Framework::InitRunTimeData()
     _Projection = _camera->GetPerspective();
     _cbData.camPos = _camera->GetPosition();
 
-    //Materials & Lights
-    _defaultMaterial.Diffuse = XMFLOAT4(0.75164f, 0.60648f, 0.22648f, 1.0f);
-    _defaultMaterial.Ambient = XMFLOAT4(0.24725f, 0.1995f, 0.0745f, 1.0f);
-    _defaultMaterial.Specular = XMFLOAT4(0.628281f, 0.555802f, 0.366065f, 1.0f);
-    _defaultMaterial.Shininess = float(52.2f);
-    //more material values at http://devernay.free.fr/cours/opengl/materials.html
-
     //load light from json config
     std::ifstream input_json(L"Lights/WhiteLight.json");
     json j;
@@ -317,7 +310,6 @@ void DX11Framework::Draw()
     _cbData.World = XMMatrixTranspose(XMLoadFloat4x4(&_World));
     _cbData.View = XMMatrixTranspose(XMLoadFloat4x4(&_View));
     _cbData.Projection = XMMatrixTranspose(XMLoadFloat4x4(&_Projection));
-    _cbData.mat = _defaultMaterial;
     _cbData.light = _loadedLight;
 
     _immediateContext->VSSetShader(_vertexShader.Get(), nullptr, 0);

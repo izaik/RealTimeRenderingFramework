@@ -6,14 +6,8 @@ cbuffer ConstantBuffer : register(b0)
     float4x4 Projection;
     float4x4 View;
     float4x4 World;
-    struct Material
-    {
-        float4 Diffuse;
-        float4 Ambient;
-        float4 Specular;
-        float Shininess;
-    } mat;
     float3 camPos;
+    float Shininess;
     struct Light
     {
         float4 Diffuse;
@@ -72,7 +66,7 @@ float4 PS_main(VS_Out input) : SV_TARGET
     //specular lighting
     float3 camDir = normalize(camPos - input.worldPos.xyz);
     float3 reflectDir = reflect(-lightDir, normal.xyz);
-    float specularAmount = pow(max(dot(camDir, reflectDir), 0.0), mat.Shininess);
+    float specularAmount = pow(max(dot(camDir, reflectDir), 0.0), Shininess);
     float4 specular = light.Specular * (texSpecular * specularAmount);
     
     float4 color = ambient + diffuse + specular;

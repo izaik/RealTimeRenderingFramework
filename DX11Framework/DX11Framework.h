@@ -48,7 +48,6 @@ class DX11Framework
 	XMFLOAT4X4 _World;
 	XMFLOAT4X4 _View;
 	XMFLOAT4X4 _Projection;
-	Material _defaultMaterial;
 	Light _loadedLight;
 
 	Camera* _camera;

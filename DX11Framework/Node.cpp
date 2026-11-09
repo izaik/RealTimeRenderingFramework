@@ -44,11 +44,12 @@ void Node::Draw(RenderContext& _RenderContext) {
 }
 
 GeometryNode::GeometryNode(ResourceManager* RM, std::string name,
-	const char* diffpath, const char* specpath, const char* meshpath,
+	const char* diffpath, const char* specpath, float shininess, const char* meshpath,
 	ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context) : Node(RM, name)
 {
 	Diffuse = RM->GetResource<TextureResource>(diffpath, device, context, diffpath);
 	Specular = RM->GetResource<TextureResource>(specpath, device, context, specpath);
+	Shininess = shininess;
 	MeshRes = RM->GetResource<MeshResource>(meshpath, meshpath, device);
 }
 
@@ -61,11 +62,14 @@ void GeometryNode::Draw(RenderContext& _RenderContext)
 	//configure vertex and index buffers
 	_RenderContext.context->IASetVertexBuffers(0, 1, MeshRes->Mesh.VertexBuffer.GetAddressOf(), &MeshRes->Mesh.VBStride, &MeshRes->Mesh.VBOffset);
 	_RenderContext.context->IASetIndexBuffer(MeshRes->Mesh.IndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
-
+	
 	//send world matrix to constant buffer and use local variable to not overwrite shared data
 	ConstantBuffer localCBufferData = *(_RenderContext.cbData);
 	XMMATRIX FinalWorld = XMLoadFloat4x4(&WorldMatrix);
 	localCBufferData.World = XMMatrixTranspose(FinalWorld);
+
+	//send shininess to constant buffer
+	_RenderContext.cbData->Shininess = Shininess;
 
 	//Write constant buffer data onto GPU
 	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
