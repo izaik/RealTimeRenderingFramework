@@ -63,8 +63,6 @@ class DX11Framework
 	float simpleCount = 0;
 	float deltaTime = 0;
 
-	float userRotate = 0;
-
 public:
 	void Initialise(HINSTANCE hInstance, int nCmdShow);
 	void CreateWindowHandle(HINSTANCE hInstance, int nCmdShow);
