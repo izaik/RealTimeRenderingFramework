@@ -5,6 +5,7 @@ UserInput::UserInput() {};
 LRESULT UserInput::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message)
     {
+    //KEYBOARD INPUT
     case WM_KEYDOWN:
         UserInput::OnKeyDown(lParam);
         return 0;
@@ -16,7 +17,27 @@ LRESULT UserInput::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
     case WM_DESTROY:
         PostQuitMessage(0);
         return 0;
+
+    //MOUSE INPUT
+    case WM_INPUT:
+        UINT dwSize = sizeof(RAWINPUT);
+
+        static BYTE lpb[sizeof(RAWINPUT)]; //creates a buffer to hold incoming raw input packets static means it won't be constantly created and destroyed
+        GetRawInputData((HRAWINPUT)lParam, RID_INPUT, lpb, &dwSize, sizeof(RAWINPUTHEADER));
+
+        RAWINPUT* raw = (RAWINPUT*)lpb; //cast data in buffer to RAWINPUT pointer structure
+
+        if (raw->header.dwType == RIM_TYPEMOUSE) { //only process data from mouse
+            float xOffset = static_cast<float>(raw->data.mouse.lLastX); //get how far the mouse has moved since last frame
+            float yOffset = static_cast<float>(raw->data.mouse.lLastY);
+
+            mouseXOffset += xOffset;
+            mouseYOffset += yOffset;
+        }
+        return 0;
     }
+    
+    
 
     // Handle any messages the switch statement didn't.
     return DefWindowProc(hWnd, message, wParam, lParam);
@@ -57,6 +78,7 @@ void UserInput::OnKeyUp(LPARAM lparam)
 void UserInput::ProcessInput(ComPtr<ID3D11DeviceContext>& context,
     ComPtr<ID3D11RasterizerState>& wireframeState, ComPtr<ID3D11RasterizerState>& fillState,
     Camera* camera, float deltaTime) {
+    //KEYBOARD INPUT
     if (_keys[SCANCODE_TAB])
     {
         context->RSSetState(wireframeState.Get());
@@ -65,7 +87,6 @@ void UserInput::ProcessInput(ComPtr<ID3D11DeviceContext>& context,
     {
         context->RSSetState(fillState.Get());
     }
-
     if (_keys[SCANCODE_W]) {
         camera->ProcessKeyboardInput(FORWARD, deltaTime);
     }
@@ -77,5 +98,12 @@ void UserInput::ProcessInput(ComPtr<ID3D11DeviceContext>& context,
     }
     if (_keys[SCANCODE_A]) {
         camera->ProcessKeyboardInput(LEFT, deltaTime);
+    }
+    //MOUSE INPUT
+    if (mouseXOffset != 0 || mouseYOffset != 0) {
+        camera->ProcessMouseInput(mouseXOffset, mouseYOffset, deltaTime);
+        //reset to zero
+        mouseXOffset = 0;
+        mouseYOffset = 0;
     }
 };

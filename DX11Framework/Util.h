@@ -18,20 +18,36 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
     if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
         return true;
 
-    DX11Framework* application;
+    DX11Framework* application = nullptr;
 
-    switch (message)
+    //without all these if statements gethandle crashes :(
+    if (message == WM_CREATE)
     {
-    case WM_CREATE: //WindowProc needs to be static for CreateWindow(), we pass a DX11Framework pointer as an additional parameter
-    {               //We reintepret the window creation information into a DX11Framework pointer
         application = static_cast<DX11Framework*>(reinterpret_cast<LPCREATESTRUCT>(lParam)->lpCreateParams);
-        //Now add that pointer as some extra data associated with our window
         SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(application));
+        return 0;
     }
-    return 0;
+    else
+    {
+        application = reinterpret_cast<DX11Framework*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
     }
 
-    //If not creating, we should have already stored the correct instance pointer, so now get it and call it
-    application = reinterpret_cast<DX11Framework*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+    // if the application isnt initialized yet, skip and use default window proc
+    if (application == nullptr) {
+        return DefWindowProc(hWnd, message, wParam, lParam);
+    }
+
+    if (application->GetHandle() != nullptr) {
+        RAWINPUTDEVICE rawInputDevice[1];
+        rawInputDevice[0].usUsagePage = 0x01;
+        rawInputDevice[0].usUsage = 0x02;
+        rawInputDevice[0].dwFlags = RIDEV_INPUTSINK;
+        rawInputDevice[0].hwndTarget = application->GetHandle();
+
+        RegisterRawInputDevices(rawInputDevice, 1, sizeof(RAWINPUTDEVICE));
+    }
+
+    ShowCursor(FALSE);
+
     return application->_userInput.HandleMessage(hWnd, message, wParam, lParam);
 }

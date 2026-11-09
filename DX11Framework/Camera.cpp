@@ -10,7 +10,8 @@ Camera::Camera(
 	float farPlane, 
 	float movementSpeed,
 	float yaw, 
-	float pitch) 
+	float pitch,
+	float cameraSensitivity) 
 {
 	Position = position;
 	Front = direction;
@@ -21,6 +22,7 @@ Camera::Camera(
 	NearDepth = nearPlane;
 	FarDepth = farPlane;
 	MovementSpeed = movementSpeed;
+	CameraSensitivity = cameraSensitivity;
 
 	Yaw = yaw;
 	Pitch = pitch;
@@ -63,7 +65,10 @@ void Camera::ProcessKeyboardInput(MOVEMENT_DIRECTION movementDirection, float de
 	}
 };
 
-void Camera::ProcessMouseInput() {
+void Camera::ProcessMouseInput(float xOffset, float yOffset, float deltaTime) {
+	Yaw += xOffset  * CameraSensitivity;
+	Pitch += yOffset * CameraSensitivity;
+	NeedUpdate = true;
 	// TODO: Handle input from mouse
 };
 
