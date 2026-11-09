@@ -32,6 +32,7 @@ class Camera {
 	float NearDepth;
 	float FarDepth;
 	float MovementSpeed;
+	float CameraSensitivity;
 
 	XMFLOAT4X4 Perspective;
 	XMFLOAT4X4 View;
@@ -49,10 +50,11 @@ public:
 		float farPlane = 100.0f, 
 		float movementSpeed = 2.5f,
 		float yaw = -90.0f, 
-		float pitch = 0.0f);
+		float pitch = 0.0f,
+		float cameraSensitivity = 0.2f);
 	virtual ~Camera() = default;
 	void ProcessKeyboardInput(MOVEMENT_DIRECTION movementDirection, float deltaTime);
-	void ProcessMouseInput();
+	void ProcessMouseInput(float xOffset, float yOffset, float deltaTime);
 	void Update();
 
 	XMFLOAT3 GetPosition() { return Position; }

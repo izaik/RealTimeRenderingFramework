@@ -12,7 +12,9 @@ using Microsoft::WRL::ComPtr;
 
 class UserInput {
 	std::array<bool, SCANCODE_COUNT> _keys;
-
+	
+	float mouseXOffset = 0.0f;
+	float mouseYOffset = 0.0f;
 public:
 	UserInput();
 	LRESULT HandleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

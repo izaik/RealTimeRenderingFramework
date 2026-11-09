@@ -62,6 +62,8 @@ class DX11Framework
 	float deltaTime = 0;
 
 public:
+	HWND GetHandle() const { return _windowHandle; }
+
 	void Initialise(HINSTANCE hInstance, int nCmdShow);
 	void CreateWindowHandle(HINSTANCE hInstance, int nCmdShow);
 	void CreateD3DDevice();
