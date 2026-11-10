@@ -2,7 +2,7 @@
   {
     "name": "Skybox",
     "type": "SkyboxNode",
-    "texturepath": "Textures/Cubemaps/skybox.dds"
+    "texturepath": "Textures/Cubemaps/nebula.dds"
   },
   {
     "name": "Whitelight",

@@ -38,7 +38,7 @@ VS_Out VS_main(float3 Position : POSITION, float3 Normal : NORMAL, float2 TexCoo
     
     output.worldPos = mul(Pos4, World);
     
-    output.texCoord = float3(Position.x, -Position.y, Position.z);
+    output.texCoord = float3(Position.x, -Position.y, Position.z); //negate y to fix upside down texture may need smarter methods for this in future
     
     return output;
 }

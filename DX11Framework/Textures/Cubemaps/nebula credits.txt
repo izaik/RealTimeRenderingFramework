@@ -1,0 +1,3 @@
+taken as hdri from: https://www.spacespheremaps.com/hdr-spheremaps/
+converted to cubemap format png at: https://hdri-to-cubemap-converter.vercel.app/
+converted to dds in nvidia texture tools
