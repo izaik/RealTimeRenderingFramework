@@ -38,7 +38,7 @@ VS_Out VS_main(float3 Position : POSITION, float3 Normal : NORMAL, float2 TexCoo
     
     output.worldPos = mul(Pos4, World);
     
-    output.texCoord = Position;
+    output.texCoord = float3(Position.x, -Position.y, Position.z);
     
     return output;
 }
