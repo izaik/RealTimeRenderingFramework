@@ -86,3 +86,20 @@ void GeometryNode::Draw(RenderContext& _RenderContext)
 	//Call logic from parent class, child nodes may be of different type
 	Node::Draw(_RenderContext);
 }
+
+LightNode::LightNode(ResourceManager* RM, std::string name, XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular, XMFLOAT3 direction) : Node(RM, name) {
+	Diffuse = diffuse;
+	Ambient = ambient;
+	Specular = specular;
+	Direction = direction;
+};
+
+void LightNode::Draw(RenderContext& _RenderContext) {
+	_RenderContext.cbData->light.Diffuse = Diffuse;
+	_RenderContext.cbData->light.Ambient = Ambient;
+	_RenderContext.cbData->light.Specular = Specular;
+	_RenderContext.cbData->light.Direction = Direction;
+	//TODO add logic for different light types + multiple lights
+
+	Node::Draw(_RenderContext);
+}

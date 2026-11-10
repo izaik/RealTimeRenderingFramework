@@ -250,16 +250,6 @@ void DX11Framework::InitRunTimeData()
     _Projection = _camera->GetPerspective();
     _cbData.camPos = _camera->GetPosition();
 
-    //load light from json config
-    std::ifstream input_json(L"Lights/WhiteLight.json");
-    json j;
-    input_json >> j;
-
-    _loadedLight.Diffuse = XMFLOAT4(j["Diffuse"][0], j["Diffuse"][1], j["Diffuse"][2], j["Diffuse"][3]);
-    _loadedLight.Ambient = XMFLOAT4(j["Ambient"][0], j["Ambient"][1], j["Ambient"][2], j["Ambient"][3]);
-    _loadedLight.Specular = XMFLOAT4(j["Specular"][0], j["Specular"][1], j["Specular"][2], j["Specular"][3]);
-    _loadedLight.Direction = XMFLOAT3(j["Direction"][0], j["Direction"][1], j["Direction"][2]);
-
     _Scene.LoadSceneFromJson("Scenes/SolarSystem.json", &_RM, _device, _immediateContext);
 
 }
@@ -310,7 +300,7 @@ void DX11Framework::Draw()
     _cbData.World = XMMatrixTranspose(XMLoadFloat4x4(&_World));
     _cbData.View = XMMatrixTranspose(XMLoadFloat4x4(&_View));
     _cbData.Projection = XMMatrixTranspose(XMLoadFloat4x4(&_Projection));
-    _cbData.light = _loadedLight;
+    //_cbData.light = _loadedLight;
 
     _immediateContext->VSSetShader(_vertexShader.Get(), nullptr, 0);
     _immediateContext->PSSetShader(_pixelShader.Get(), nullptr, 0);

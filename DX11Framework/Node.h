@@ -52,9 +52,20 @@ class GeometryNode : public Node {
 
 public:
 	GeometryNode(ResourceManager* RM, std::string name,
-		const char* diffpath, const char* specpath, float shininess, const char* meshpath, //there is probably a better way to do this
+		const char* diffpath, const char* specpath, float shininess, const char* meshpath,
 		ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context);
 
+	void Draw(RenderContext& _RenderContext) override;
+};
+
+class LightNode : public Node {
+	XMFLOAT4 Diffuse;
+	XMFLOAT4 Ambient;
+	XMFLOAT4 Specular;
+	XMFLOAT3 Direction;
+
+public:
+	LightNode(ResourceManager* RM, std::string name, XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular, XMFLOAT3 direction);
 	void Draw(RenderContext& _RenderContext) override;
 };
 // TODO: add more node types

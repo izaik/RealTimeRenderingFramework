@@ -32,11 +32,24 @@ void Scene::ParseNodeRecursive(const json& jNode, Node* parentNode,
 		std::string meshPath = jNode.value("meshpath", "");
 
 		parentNode->AddChild<GeometryNode>(rm, name, diffPath.c_str(), specPath.c_str(), shininess, meshPath.c_str(), device, context);
-		currentNode = parentNode->Children.back().get();
+	}
+	if (type == "LightNode") {
+		json jDiffuse = jNode.value("diffuse", nlohmann::json::object());
+		json jAmbient = jNode.value("ambient", nlohmann::json::object());
+		json jSpecular = jNode.value("specular", nlohmann::json::object());
+		json jDirection = jNode.value("direction", nlohmann::json::object());
+
+		XMFLOAT4 diffuse = XMFLOAT4(jDiffuse["r"], jDiffuse["g"], jDiffuse["b"], jDiffuse["a"]);
+		XMFLOAT4 ambient = XMFLOAT4(jAmbient["r"], jAmbient["g"], jAmbient["b"], jAmbient["a"]);
+		XMFLOAT4 specular = XMFLOAT4(jSpecular["r"], jSpecular["g"], jSpecular["b"], jSpecular["a"]);
+		XMFLOAT3 direction = XMFLOAT3(jDirection["x"], jDirection["y"], jDirection["z"]);
+
+		parentNode->AddChild<LightNode>(rm, name, diffuse, ambient, specular, direction);
 	}
 	// TODO: handle more node types here
 
 	// apply local transform from json
+	currentNode = parentNode->Children.back().get();
 	UpdateNodeTransformFromJson(jNode, currentNode);
 
 	// recursively read child nodes if present
