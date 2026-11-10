@@ -68,4 +68,14 @@ public:
 	LightNode(ResourceManager* RM, std::string name, XMFLOAT4 diffuse, XMFLOAT4 ambient, XMFLOAT4 specular, XMFLOAT3 direction);
 	void Draw(RenderContext& _RenderContext) override;
 };
+
+class SkyboxNode : public Node {
+	std::shared_ptr<TextureResource> Skybox;
+	std::shared_ptr<MeshResource> Cube;
+
+public:
+	SkyboxNode(ResourceManager* RM, std::string name, const char* skyboxpath,
+		ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context);
+	void Draw(RenderContext& _RenderContext) override;
+};
 // TODO: add more node types

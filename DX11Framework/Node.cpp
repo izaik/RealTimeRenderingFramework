@@ -103,3 +103,51 @@ void LightNode::Draw(RenderContext& _RenderContext) {
 
 	Node::Draw(_RenderContext);
 }
+
+SkyboxNode::SkyboxNode(ResourceManager* RM, std::string name, const char* skyboxpath,
+	ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context) : Node(RM, name) 
+{
+	Skybox = RM->GetResource<TextureResource>(skyboxpath, device, context, skyboxpath);
+	std::string cubepath = "Models/Made In 3ds Max/cube.obj"; //making the assumption here that the skybox will always be a cube
+	Cube = RM->GetResource<MeshResource>(cubepath, cubepath, device);
+	XMStoreFloat4x4(&WorldMatrix, XMMatrixIdentity());
+	XMStoreFloat4x4(&LocalMatrix, XMMatrixIdentity());
+};
+
+void SkyboxNode::Draw(RenderContext& _RenderContext) {
+	//set rasterizer state to skybox
+	_RenderContext.context->RSSetState(_RenderContext._skyboxState);
+	//set depth stencil state to skybox
+	_RenderContext.context->OMSetDepthStencilState(_RenderContext._depthStencilSkybox, 0);
+
+	//draw skybox 
+	//set shader resource to the texture cube
+	_RenderContext.context->PSSetShaderResources(0, 1, Skybox->Texture.GetAddressOf());
+
+	//configure vertex and index buffers
+	_RenderContext.context->IASetVertexBuffers(0, 1, Cube->Mesh.VertexBuffer.GetAddressOf(), &Cube->Mesh.VBStride, &Cube->Mesh.VBOffset);
+	_RenderContext.context->IASetIndexBuffer(Cube->Mesh.IndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
+
+	//send world matrix to constant buffer and use local variable to not overwrite shared data
+	ConstantBuffer localCBufferData = *(_RenderContext.cbData);
+	XMMATRIX FinalWorld = XMLoadFloat4x4(&WorldMatrix);
+	localCBufferData.World = XMMatrixTranspose(FinalWorld);
+
+	//Write constant buffer data onto GPU
+	D3D11_MAPPED_SUBRESOURCE mappedSubresource;
+	_RenderContext.context->Map(_RenderContext.constantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
+	memcpy(mappedSubresource.pData, &localCBufferData, sizeof(ConstantBuffer));
+	_RenderContext.context->Unmap(_RenderContext.constantBuffer, 0);
+
+	_RenderContext.context->VSSetConstantBuffers(0, 1, &_RenderContext.constantBuffer);
+	_RenderContext.context->PSSetConstantBuffers(0, 1, &_RenderContext.constantBuffer);
+
+	//draw object
+	_RenderContext.context->DrawIndexed(Cube->Mesh.IndexCount, 0, 0);
+	
+	//revert settings/shaders/state to normal
+	_RenderContext.context->RSSetState(_RenderContext._fillState);
+	_RenderContext.context->OMSetDepthStencilState(_RenderContext._defaultDepthStencil, 0);
+	//do not call draw for other nodes the skybox should have no child nodes
+};
+

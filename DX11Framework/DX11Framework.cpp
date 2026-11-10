@@ -109,6 +109,22 @@ void DX11Framework::CreateSwapChainAndFrameBuffer()
     depthStencilDesc.Format = DXGI_FORMAT_D32_FLOAT;
     depthStencilDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
     ThrowOnFail(_device->CreateDepthStencilView(texture.Get(), &depthStencilDesc, _depthStencilView.GetAddressOf()));
+
+    //default depth stencil state for normal rendering
+    D3D11_DEPTH_STENCIL_DESC defaultDepthStencilDesc = {};
+    defaultDepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+    defaultDepthStencilDesc.DepthEnable = true;
+    defaultDepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+    ThrowOnFail(_device->CreateDepthStencilState(&defaultDepthStencilDesc, _defaultDepthStencil.GetAddressOf()));
+
+    //depth stencil state for skybox
+    D3D11_DEPTH_STENCIL_DESC depthSkyboxdesc = {};
+    depthSkyboxdesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+    depthSkyboxdesc.DepthEnable = true;
+    depthSkyboxdesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO; //do not write skybox to depth buffer
+    ThrowOnFail(_device->CreateDepthStencilState(&depthSkyboxdesc, _depthStencilSkybox.GetAddressOf()));
+
+    _immediateContext->OMSetDepthStencilState(_defaultDepthStencil.Get(), 0);
 }
 
 void DX11Framework::CompileShader(const std::wstring& fileName, const std::string& entryPoint, const std::string& profile, ComPtr<ID3DBlob>& shaderBlob) const
@@ -156,6 +172,17 @@ void DX11Framework::InitShadersAndInputLayout()
     CompileShader(L"SimpleShaders.hlsl", "PS_main", "ps_5_0", pixelShaderBlob);
 
     ThrowOnFail(_device->CreatePixelShader(pixelShaderBlob->GetBufferPointer(), pixelShaderBlob->GetBufferSize(), nullptr, _pixelShader.GetAddressOf()));
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+   
+    //Vertex shader for skybox
+    CompileShader(L"Skybox.hlsl", "VS_main", "vs_5_0", vertexShaderBlob);
+    ThrowOnFail(_device->CreateVertexShader(vertexShaderBlob->GetBufferPointer(), vertexShaderBlob->GetBufferSize(), nullptr, _vertexShaderSkybox.GetAddressOf()));
+    ThrowOnFail(_device->CreateInputLayout(inputElementDesc, ARRAYSIZE(inputElementDesc), vertexShaderBlob->GetBufferPointer(), vertexShaderBlob->GetBufferSize(), _inputLayout.GetAddressOf()));
+    //Pixel shader for skybox
+    CompileShader(L"Skybox.hlsl", "PS_main", "ps_5_0", pixelShaderBlob);
+    ThrowOnFail(_device->CreatePixelShader(pixelShaderBlob->GetBufferPointer(), pixelShaderBlob->GetBufferSize(), nullptr, _pixelShaderSkybox.GetAddressOf()));
+
 }
 
 //ImGui is a simple UI framework for development, it is not designed for release quality UI
@@ -208,6 +235,13 @@ void DX11Framework::InitPipelineVariables()
 
     ThrowOnFail(_device->CreateRasterizerState(&wireframeDesc, _wireframeState.GetAddressOf()));
 
+    //Rasterizer - Cull front faces render back faces
+    D3D11_RASTERIZER_DESC skyboxRastDesc = {};
+    skyboxRastDesc.FillMode = D3D11_FILL_SOLID;
+    skyboxRastDesc.CullMode = D3D11_CULL_FRONT;
+
+    ThrowOnFail(_device->CreateRasterizerState(&skyboxRastDesc, _skyboxState.GetAddressOf()));
+
     //Viewport Values
     _viewport = { 0.0f, 0.0f, (float)_WindowWidth, (float)_WindowHeight, 0.0f, 1.0f };
     _immediateContext->RSSetViewports(1, &_viewport);
@@ -238,6 +272,8 @@ void DX11Framework::InitPipelineVariables()
 
     ThrowOnFail(_device->CreateSamplerState(&samplerDesc, _anisotropicSampler.GetAddressOf()));
     _immediateContext->PSSetSamplers(0, 1, _anisotropicSampler.GetAddressOf());
+
+
 }
 
 void DX11Framework::InitRunTimeData()
@@ -277,9 +313,10 @@ void DX11Framework::Update()
     simpleCount += deltaTime;
     _cbData.timeSinceStart = simpleCount;
 
+    _userInput.ProcessInput(_immediateContext, _wireframeState, _fillState, _camera, deltaTime); //call this before the camera updates otherwise it will cause lag 
     _camera->Update();
     _Scene.UpdateScene(simpleCount);
-    _userInput.ProcessInput(_immediateContext, _wireframeState, _fillState, _camera, deltaTime);
+    
 }
 
 void DX11Framework::Draw()
@@ -300,7 +337,7 @@ void DX11Framework::Draw()
     _cbData.World = XMMatrixTranspose(XMLoadFloat4x4(&_World));
     _cbData.View = XMMatrixTranspose(XMLoadFloat4x4(&_View));
     _cbData.Projection = XMMatrixTranspose(XMLoadFloat4x4(&_Projection));
-    //_cbData.light = _loadedLight;
+    _cbData.camPos = _camera->GetPosition();
 
     _immediateContext->VSSetShader(_vertexShader.Get(), nullptr, 0);
     _immediateContext->PSSetShader(_pixelShader.Get(), nullptr, 0);
@@ -309,6 +346,16 @@ void DX11Framework::Draw()
     rc.context = _immediateContext.Get();
     rc.constantBuffer = _constantBuffer.Get();
     rc.cbData = &_cbData;
+ 
+    rc._fillState = _fillState.Get();
+    rc._defaultDepthStencil = _defaultDepthStencil.Get();
+    rc._vertexShader = _vertexShader.Get();
+    rc._pixelShader = _pixelShader.Get();
+
+    rc._skyboxState = _skyboxState.Get();
+    rc._depthStencilSkybox = _depthStencilSkybox.Get();
+    rc._vertexShaderSkybox = _vertexShaderSkybox.Get();
+    rc._pixelShaderSkybox = _pixelShaderSkybox.Get();
 
     _Scene.DrawScene(rc);
 

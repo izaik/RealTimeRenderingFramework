@@ -1,5 +1,10 @@
 [
   {
+    "name": "Skybox",
+    "type": "SkyboxNode",
+    "texturepath": "Textures/Cubemaps/skybox.dds"
+  },
+  {
     "name": "Whitelight",
     "type": "LightNode",
     "diffuse": {

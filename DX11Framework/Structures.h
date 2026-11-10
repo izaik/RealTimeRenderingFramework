@@ -49,7 +49,7 @@ struct ConstantBuffer
 	XMMATRIX View;
 	XMMATRIX World;
 	XMFLOAT3 camPos;
-	float Shininess;
+	float Shininess = 0.0f;
 	Light light;
 	float timeSinceStart;
 };
@@ -59,4 +59,14 @@ struct RenderContext {
 	ID3D11DeviceContext* context = nullptr;
 	ID3D11Buffer* constantBuffer = nullptr;
 	ConstantBuffer* cbData = nullptr;
+	
+	ID3D11RasterizerState* _fillState = nullptr;
+	ID3D11DepthStencilState* _defaultDepthStencil = nullptr;
+	ID3D11VertexShader* _vertexShader = nullptr;
+	ID3D11PixelShader* _pixelShader = nullptr;
+
+	ID3D11RasterizerState* _skyboxState = nullptr;
+	ID3D11DepthStencilState* _depthStencilSkybox = nullptr;
+	ID3D11VertexShader* _vertexShaderSkybox = nullptr;
+	ID3D11PixelShader* _pixelShaderSkybox = nullptr;
 };

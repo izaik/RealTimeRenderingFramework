@@ -10,8 +10,21 @@ void Scene::DrawScene(RenderContext _RenderContext)
 		return;
 	}
 
-	//SceneRoot->UpdateWorldMatrix(simpleCount);
-	SceneRoot->Draw(_RenderContext);
+	_RenderContext.context->VSSetShader(_RenderContext._vertexShaderSkybox, nullptr, 0);
+	_RenderContext.context->PSSetShader(_RenderContext._pixelShaderSkybox, nullptr, 0);
+	if (SceneSkybox != nullptr)
+	{
+		SceneSkybox->Draw(_RenderContext);
+	}
+
+	_RenderContext.context->VSSetShader(_RenderContext._vertexShader, nullptr, 0);
+	_RenderContext.context->PSSetShader(_RenderContext._pixelShader, nullptr, 0);
+	if (SceneRoot != nullptr)
+	{
+		SceneRoot->Draw(_RenderContext);
+	}
+
+	
 };
 
 void Scene::UpdateScene(float simpleCount) {
@@ -46,16 +59,23 @@ void Scene::ParseNodeRecursive(const json& jNode, Node* parentNode,
 
 		parentNode->AddChild<LightNode>(rm, name, diffuse, ambient, specular, direction);
 	}
+	if (type == "SkyboxNode") {
+		std::string jSkyboxTex = jNode.value("texturepath", "");
+		SceneSkybox = new SkyboxNode(rm, name, jSkyboxTex.c_str(), device, context);
+	}
 	// TODO: handle more node types here
 
-	// apply local transform from json
-	currentNode = parentNode->Children.back().get();
-	UpdateNodeTransformFromJson(jNode, currentNode);
+	//skybox nodes cannot have children
+	if (type != "SkyboxNode") {
+		// apply local transform from json
+		currentNode = parentNode->Children.back().get();
+		UpdateNodeTransformFromJson(jNode, currentNode);
 
-	// recursively read child nodes if present
-	if (jNode.contains("children") && jNode["children"].is_array()) {
-		for (const json& jChild : jNode["children"]) {
-			ParseNodeRecursive(jChild, currentNode, rm, device, context);
+		// recursively read child nodes if present
+		if (jNode.contains("children") && jNode["children"].is_array()) {
+			for (const json& jChild : jNode["children"]) {
+				ParseNodeRecursive(jChild, currentNode, rm, device, context);
+			}
 		}
 	}
 }

@@ -139,5 +139,8 @@
     <CopyFileToFolders Include="SimpleShaders.hlsl">
       <Filter>Shaders</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="Skybox.hlsl">
+      <Filter>Shaders</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>

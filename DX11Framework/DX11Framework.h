@@ -35,6 +35,7 @@ class DX11Framework
 
 	ComPtr<ID3D11RasterizerState> _fillState;
 	ComPtr<ID3D11RasterizerState> _wireframeState;
+	ComPtr<ID3D11DepthStencilState> _defaultDepthStencil;
 	ComPtr<ID3D11VertexShader> _vertexShader;
 	ComPtr<ID3D11InputLayout> _inputLayout;
 	ComPtr<ID3D11PixelShader> _pixelShader;
@@ -42,6 +43,11 @@ class DX11Framework
 	ComPtr<ID3D11Buffer> _vertexBuffer;
 	ComPtr<ID3D11Buffer> _indexBuffer;
 	ComPtr<ID3D11SamplerState> _anisotropicSampler;
+
+	ComPtr<ID3D11RasterizerState> _skyboxState;
+	ComPtr<ID3D11DepthStencilState> _depthStencilSkybox;
+	ComPtr<ID3D11VertexShader> _vertexShaderSkybox;
+	ComPtr<ID3D11PixelShader> _pixelShaderSkybox;
 
 	HWND _windowHandle;
 

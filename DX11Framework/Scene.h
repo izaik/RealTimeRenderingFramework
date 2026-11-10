@@ -13,6 +13,7 @@ using Microsoft::WRL::ComPtr;
 class Scene {
 public:
 	std::unique_ptr<Node> SceneRoot = nullptr;
+	SkyboxNode* SceneSkybox = nullptr;
 
 	Scene();
 	virtual ~Scene() = default;
