@@ -40,7 +40,7 @@ VS_Out VS_main(float3 Position : POSITION, float3 Normal : NORMAL, float2 TexCoo
     float3 normal = normalize(Normal);
     output.normal = mul(float4(normal, 0), World);
     
-    output.texCoord = TexCoord;
+    output.texCoord = float2(TexCoord.x, -TexCoord.y);
     
     return output;
 }

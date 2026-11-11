@@ -276,6 +276,7 @@ void DX11Framework::InitPipelineVariables()
 
 }
 
+
 void DX11Framework::InitRunTimeData()
 {
     // New Camera stuff here

@@ -52,8 +52,8 @@
   {
     "name": "Sun",
     "type": "GeometryNode",
-    "diffpath": "Textures/Crate_COLOR.dds",
-    "specpath": "Textures/Crate_SPEC.dds",
+    "diffpath": "Textures/sun.dds",
+    "specpath": "Textures/sun_s.dds",
     "shininess": 32.0,
     "meshpath": "Models/Made In 3ds Max/sphere.obj",
     "transform": {
@@ -82,8 +82,8 @@
       {
         "name": "Earth",
         "type": "GeometryNode",
-        "diffpath": "Textures/Crate_COLOR.dds",
-        "specpath": "Textures/Crate_SPEC.dds",
+        "diffpath": "Textures/earth.dds",
+        "specpath": "Textures/earth_s.dds",
         "shininess": 32.0,
         "meshpath": "Models/Made In 3ds Max/sphere.obj",
         "transform": {
@@ -112,8 +112,8 @@
           {
             "name": "Moon",
             "type": "GeometryNode",
-            "diffpath": "Textures/Crate_COLOR.dds",
-            "specpath": "Textures/Crate_SPEC.dds",
+            "diffpath": "Textures/moon.dds",
+            "specpath": "Textures/moon_s.dds",
             "shininess": 32.0,
             "meshpath": "Models/Made In 3ds Max/sphere.obj",
             "transform": {

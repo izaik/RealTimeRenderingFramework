@@ -21,5 +21,15 @@ namespace OBJLoader
 	bool FindSimilarVertex(const SimpleVertex& vertex, std::map<SimpleVertex, unsigned short>& vertToIndexMap, unsigned short& index);
 
 	//Re-creates a single index buffer from the 3 given in the OBJ file
-	void CreateIndices(const std::vector<XMFLOAT3>& inVertices, const std::vector<XMFLOAT2>& inTexCoords, const std::vector<XMFLOAT3>& inNormals, std::vector<unsigned short>& outIndices, std::vector<XMFLOAT3>& outVertices, std::vector<XMFLOAT2>& outTexCoords, std::vector<XMFLOAT3>& outNormals);
+	void CreateIndices(const std::vector<XMFLOAT3>& inVertices,
+					   const std::vector<XMFLOAT2>& inTexCoords,
+					   const std::vector<XMFLOAT3>& inNormals,
+					   const std::vector<XMFLOAT3>& inTangents,
+					   const std::vector<XMFLOAT3>& inBitangents,
+					   std::vector<unsigned short>& outIndices,
+					   std::vector<XMFLOAT3>& outVertices,
+					   std::vector<XMFLOAT2>& outTexCoords,
+					   std::vector<XMFLOAT3>& outNormals,
+					   std::vector<XMFLOAT3>& outTangents,
+					   std::vector<XMFLOAT3>& outBitangents);
 };

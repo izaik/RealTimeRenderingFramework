@@ -12,6 +12,8 @@ struct SimpleVertex
 	XMFLOAT3 Position;
 	XMFLOAT3 Normal;
 	XMFLOAT2 TexCoord;
+	XMFLOAT3 Tangent;
+	XMFLOAT3 Bitangent;
 
 	bool operator<(const SimpleVertex other) const
 	{

@@ -1,0 +1,2 @@
+from: https://www.solarsystemscope.com/textures/
+converted to dds in: nvidia texture tools
