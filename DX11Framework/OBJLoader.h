@@ -24,12 +24,10 @@ namespace OBJLoader
 	void CreateIndices(const std::vector<XMFLOAT3>& inVertices,
 					   const std::vector<XMFLOAT2>& inTexCoords,
 					   const std::vector<XMFLOAT3>& inNormals,
-					   const std::vector<XMFLOAT3>& inTangents,
-					   const std::vector<XMFLOAT3>& inBitangents,
+					   const std::vector<XMFLOAT4>& inTangents,
 					   std::vector<unsigned short>& outIndices,
 					   std::vector<XMFLOAT3>& outVertices,
 					   std::vector<XMFLOAT2>& outTexCoords,
 					   std::vector<XMFLOAT3>& outNormals,
-					   std::vector<XMFLOAT3>& outTangents,
-					   std::vector<XMFLOAT3>& outBitangents);
+					   std::vector<XMFLOAT4>& outTangents);
 };

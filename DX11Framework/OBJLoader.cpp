@@ -19,14 +19,12 @@ bool OBJLoader::FindSimilarVertex(const SimpleVertex& vertex, std::map<SimpleVer
 void OBJLoader::CreateIndices(const std::vector<XMFLOAT3>& inVertices, 
 							  const std::vector<XMFLOAT2>& inTexCoords, 
 							  const std::vector<XMFLOAT3>& inNormals, 
-							  const std::vector<XMFLOAT3>& inTangents,
-							  const std::vector<XMFLOAT3>& inBitangents,
+							  const std::vector<XMFLOAT4>& inTangents,
 							  std::vector<unsigned short>& outIndices, 
 							  std::vector<XMFLOAT3>& outVertices, 
 							  std::vector<XMFLOAT2>& outTexCoords, 
 							  std::vector<XMFLOAT3>& outNormals,
-							  std::vector<XMFLOAT3>& outTangents,
-							  std::vector<XMFLOAT3>& outBitangents)
+							  std::vector<XMFLOAT4>& outTangents)
 {
 	// Mapping from an already-existing SimpleVertex to its corresponding index
 	std::map<SimpleVertex, unsigned short> vertToIndexMap;
@@ -37,7 +35,7 @@ void OBJLoader::CreateIndices(const std::vector<XMFLOAT3>& inVertices,
 	
 	for(int i = 0; i < numVertices; ++i) //For each vertex
 	{
-		SimpleVertex vertex = {inVertices[i], inNormals[i],  inTexCoords[i], inTangents[i], inBitangents[i]};
+		SimpleVertex vertex = {inVertices[i], inNormals[i],  inTexCoords[i], inTangents[i]};
 
 		unsigned short index;
 		// See if a vertex already exists in the buffer that has the same attributes as this one
@@ -53,7 +51,6 @@ void OBJLoader::CreateIndices(const std::vector<XMFLOAT3>& inVertices,
 			outTexCoords.push_back(vertex.TexCoord);
 			outNormals.push_back(vertex.Normal);
 			outTangents.push_back(vertex.Tangent);
-			outBitangents.push_back(vertex.Bitangent);
 			
 			unsigned short newIndex = (unsigned short)outVertices.size() - 1;
 			
@@ -237,8 +234,7 @@ MeshData OBJLoader::Load(const char* filename,  ComPtr<ID3D11Device>& _pd3dDevic
 			std::vector<XMFLOAT3> expandedVertices;
 			std::vector<XMFLOAT3> expandedNormals;
 			std::vector<XMFLOAT2> expandedTexCoords;
-			std::vector<XMFLOAT3> expandedTangents;
-			std::vector<XMFLOAT3> expandedBitangents;
+			std::vector<XMFLOAT4> expandedTangents;
 			
 			for(unsigned int i = 0; i < numIndices; i++)
 			{
@@ -251,30 +247,24 @@ MeshData OBJLoader::Load(const char* filename,  ComPtr<ID3D11Device>& _pd3dDevic
 				XMVECTOR t = XMLoadFloat3(&tangents[vertIndices[i]]);
 				XMVECTOR b = XMLoadFloat3(&bitangents[vertIndices[i]]);
 
+				// check handedness by checking if the cross product of n and t points in the same direction as b
+				XMVECTOR expectedB = XMVector3Cross(n, t);
+				float handedness = (XMVectorGetX(XMVector3Dot(expectedB, b)) < 0.0f) ? -1.0f : 1.0f;
+
 				// T = T - (N . T) * N
 				XMVECTOR dot = XMVector3Dot(n, t);
 				XMVECTOR orthogonalTangent = XMVectorSubtract(t, XMVectorMultiply(n, dot));
 				orthogonalTangent = XMVector3Normalize(orthogonalTangent);
 
-				XMFLOAT3 finalT, finalB;
-				XMStoreFloat3(&finalT, orthogonalTangent);
+				XMFLOAT4 finalT;
+				XMStoreFloat4(&finalT, orthogonalTangent);
+				finalT.w = handedness; //store handedness at end
 				expandedTangents.push_back(finalT);
-
-				// check handedness and setup bitangent
-				XMVECTOR expectedB = XMVector3Cross(n, orthogonalTangent);
-				if (XMVectorGetX(XMVector3Dot(expectedB, b)) < 0.0f) {
-					orthogonalTangent = XMVectorScale(orthogonalTangent, -1.0f); //flip if needed
-				}
-
-				XMFLOAT3 storeB;
-				XMStoreFloat3(&storeB, expectedB);
-				expandedBitangents.push_back(storeB);
+				//we don't store bitangents, they can be calculated later in the shader using the cross product of the tangent and normal
 			}
 
-			
 
-
-			//Now to (finally) form the final vertex, texture coord, normal list and single index buffer using the above expanded vectors
+			//Now to (finally) form the final vertex, texture coord, normal, tangent list and single index buffer using the above expanded vectors
 			std::vector<unsigned short> meshIndices;
 			meshIndices.reserve(numIndices);
 			std::vector<XMFLOAT3> meshVertices;
@@ -283,12 +273,10 @@ MeshData OBJLoader::Load(const char* filename,  ComPtr<ID3D11Device>& _pd3dDevic
 			meshNormals.reserve(expandedNormals.size());
 			std::vector<XMFLOAT2> meshTexCoords;
 			meshTexCoords.reserve(expandedTexCoords.size());
-			std::vector<XMFLOAT3> meshTangents;
+			std::vector<XMFLOAT4> meshTangents;
 			meshTangents.reserve(expandedTangents.size());
-			std::vector<XMFLOAT3> meshBitangents;
-			meshBitangents.reserve(expandedBitangents.size());
 
-			CreateIndices(expandedVertices, expandedTexCoords, expandedNormals, expandedTangents, expandedBitangents, meshIndices, meshVertices, meshTexCoords, meshNormals, meshTangents, meshBitangents);
+			CreateIndices(expandedVertices, expandedTexCoords, expandedNormals, expandedTangents, meshIndices, meshVertices, meshTexCoords, meshNormals, meshTangents);
 
 			MeshData meshData;
 
@@ -301,7 +289,6 @@ MeshData OBJLoader::Load(const char* filename,  ComPtr<ID3D11Device>& _pd3dDevic
 				finalVerts[i].Normal = meshNormals[i];
 				finalVerts[i].TexCoord = meshTexCoords[i];
 				finalVerts[i].Tangent = meshTangents[i];
-				finalVerts[i].Bitangent = meshBitangents[i];
 			}
 
 			//Put data into vertex and index buffers, then pass the relevant data to the MeshData object.
