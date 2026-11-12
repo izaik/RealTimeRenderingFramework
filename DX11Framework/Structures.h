@@ -12,8 +12,7 @@ struct SimpleVertex
 	XMFLOAT3 Position;
 	XMFLOAT3 Normal;
 	XMFLOAT2 TexCoord;
-	XMFLOAT3 Tangent;
-	XMFLOAT3 Bitangent;
+	XMFLOAT4 Tangent;
 
 	bool operator<(const SimpleVertex other) const
 	{
@@ -50,6 +49,7 @@ struct ConstantBuffer
 	XMMATRIX Projection;
 	XMMATRIX View;
 	XMMATRIX World;
+	XMMATRIX WorldInverseTranspose;
 	XMFLOAT3 camPos;
 	float Shininess = 0.0f;
 	Light light;

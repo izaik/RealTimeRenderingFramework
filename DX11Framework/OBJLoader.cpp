@@ -60,7 +60,7 @@ void OBJLoader::CreateIndices(const std::vector<XMFLOAT3>& inVertices,
 			pair.first = vertex;
 			pair.second = newIndex;
 			
-			//vertToIndexMap.insert(pair);
+			vertToIndexMap.insert(pair);
 		}
 	}
 }
@@ -174,7 +174,7 @@ MeshData OBJLoader::Load(const char* filename,  ComPtr<ID3D11Device>& _pd3dDevic
 			std::vector<XMFLOAT3> tangents(verts.size(), XMFLOAT3(0, 0, 0));
 			std::vector<XMFLOAT3> bitangents(verts.size(), XMFLOAT3(0, 0, 0));
 			// Calculate Tangent and Bitangent per triangle
-			for (unsigned int i = 0; numIndices; i += 3)
+			for (unsigned int i = 0; i < numIndices; i += 3)
 			{
 				unsigned short ind0 = vertIndices[i];
 				unsigned short ind1 = vertIndices[i + 1];

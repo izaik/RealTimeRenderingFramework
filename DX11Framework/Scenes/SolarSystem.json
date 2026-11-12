@@ -54,6 +54,7 @@
     "type": "GeometryNode",
     "diffpath": "Textures/sun.dds",
     "specpath": "Textures/sun_s.dds",
+    "normpath": "Textures/sun_n.dds",
     "shininess": 32.0,
     "meshpath": "Models/Made In 3ds Max/sphere.obj",
     "transform": {
@@ -84,6 +85,7 @@
         "type": "GeometryNode",
         "diffpath": "Textures/earth.dds",
         "specpath": "Textures/earth_s.dds",
+        "normpath": "Textures/earth_n.dds",
         "shininess": 32.0,
         "meshpath": "Models/Made In 3ds Max/sphere.obj",
         "transform": {
@@ -114,6 +116,7 @@
             "type": "GeometryNode",
             "diffpath": "Textures/moon.dds",
             "specpath": "Textures/moon_s.dds",
+            "normpath": "Textures/moon_n.dds",
             "shininess": 32.0,
             "meshpath": "Models/Made In 3ds Max/sphere.obj",
             "transform": {

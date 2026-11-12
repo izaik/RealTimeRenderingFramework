@@ -41,10 +41,11 @@ void Scene::ParseNodeRecursive(const json& jNode, Node* parentNode,
 	if (type == "GeometryNode") {
 		std::string diffPath = jNode.value("diffpath", "");
 		std::string specPath = jNode.value("specpath", "");
+		std::string normPath = jNode.value("normpath", "");
 		float shininess = jNode.value("shininess", 0.0f);
 		std::string meshPath = jNode.value("meshpath", "");
 
-		parentNode->AddChild<GeometryNode>(rm, name, diffPath.c_str(), specPath.c_str(), shininess, meshPath.c_str(), device, context);
+		parentNode->AddChild<GeometryNode>(rm, name, diffPath.c_str(), specPath.c_str(), normPath.c_str(), shininess, meshPath.c_str(), device, context);
 	}
 	if (type == "LightNode") {
 		json jDiffuse = jNode.value("diffuse", nlohmann::json::object());

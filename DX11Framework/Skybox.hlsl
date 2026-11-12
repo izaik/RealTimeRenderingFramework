@@ -5,6 +5,7 @@ cbuffer ConstantBuffer : register(b0)
     float4x4 Projection;
     float4x4 View;
     float4x4 World;
+    float4x4 WorldInvTranspose;
     float3 camPos;
     float Shininess;
     struct Light
@@ -24,7 +25,7 @@ struct VS_Out
     float3 texCoord : TEXCOORD;
 };
 
-VS_Out VS_main(float3 Position : POSITION, float3 Normal : NORMAL, float2 TexCoord : TEXCOORD)
+VS_Out VS_main(float3 Position : POSITION, float3 Normal : NORMAL, float2 TexCoord : TEXCOORD, float4 Tangent : TANGENT)
 {   
     VS_Out output = (VS_Out)0;
 

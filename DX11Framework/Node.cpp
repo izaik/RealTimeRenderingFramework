@@ -5,6 +5,7 @@ Node::Node(ResourceManager* rm, std::string name) {
 	Name = name;
 	XMStoreFloat4x4(&LocalMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&WorldMatrix, XMMatrixIdentity());
+	XMStoreFloat4x4(&WorldInvTransposeMatrix, XMMatrixIdentity());
 	XMStoreFloat4(&ContinuousRotationVector, XMVectorZero()); //initialise as empty
 	Parent = nullptr;
 }
@@ -21,14 +22,19 @@ void Node::UpdateWorldMatrix(float simpleCount) {
 				simpleCount * ContinuousRotationVector.y, 
 				simpleCount * ContinuousRotationVector.z));
 		}
-		XMStoreFloat4x4(&WorldMatrix, localMat * parentMat);
-
-		
+		XMMATRIX finalMat = localMat * parentMat;
+		XMMATRIX invTransposeMat = XMMatrixTranspose(XMMatrixInverse(nullptr, finalMat));
+		XMStoreFloat4x4(&WorldMatrix, finalMat);
+		XMStoreFloat4x4(&WorldInvTransposeMatrix, invTransposeMat);
 	}
 	else {
 		//if no parent exists use object localmatrix (should only be scene root node)
+		XMMATRIX invTransposeMat = XMMatrixTranspose(XMMatrixInverse(nullptr, localMat));
 		WorldMatrix = LocalMatrix;
+		XMStoreFloat4x4(&WorldInvTransposeMatrix, invTransposeMat);
+		
 	}
+
 	//propagate down to all child and sub child nodes
 	for (auto& Child: Children) {
 		if (Child != nullptr) {
@@ -44,11 +50,12 @@ void Node::Draw(RenderContext& _RenderContext) {
 }
 
 GeometryNode::GeometryNode(ResourceManager* RM, std::string name,
-	const char* diffpath, const char* specpath, float shininess, const char* meshpath,
+	const char* diffpath, const char* specpath, const char* normpath, float shininess, const char* meshpath,
 	ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context) : Node(RM, name)
 {
 	Diffuse = RM->GetResource<TextureResource>(diffpath, device, context, diffpath);
 	Specular = RM->GetResource<TextureResource>(specpath, device, context, specpath);
+	Normal = RM->GetResource<TextureResource>(normpath, device, context, normpath);
 	Shininess = shininess;
 	MeshRes = RM->GetResource<MeshResource>(meshpath, meshpath, device);
 }
@@ -58,15 +65,18 @@ void GeometryNode::Draw(RenderContext& _RenderContext)
 	//set textures
 	_RenderContext.context->PSSetShaderResources(0, 1, Diffuse->Texture.GetAddressOf());
 	_RenderContext.context->PSSetShaderResources(1, 1, Specular->Texture.GetAddressOf());
+	_RenderContext.context->PSSetShaderResources(2, 1, Normal->Texture.GetAddressOf());
 
 	//configure vertex and index buffers
 	_RenderContext.context->IASetVertexBuffers(0, 1, MeshRes->Mesh.VertexBuffer.GetAddressOf(), &MeshRes->Mesh.VBStride, &MeshRes->Mesh.VBOffset);
 	_RenderContext.context->IASetIndexBuffer(MeshRes->Mesh.IndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 	
-	//send world matrix to constant buffer and use local variable to not overwrite shared data
+	//send world matrix (and transposed inverse) to constant buffer and use local variable to not overwrite shared data
 	ConstantBuffer localCBufferData = *(_RenderContext.cbData);
 	XMMATRIX FinalWorld = XMLoadFloat4x4(&WorldMatrix);
 	localCBufferData.World = XMMatrixTranspose(FinalWorld);
+	XMMATRIX FinalWorldInverseTranspose = XMLoadFloat4x4(&WorldInvTransposeMatrix);
+	localCBufferData.WorldInverseTranspose = XMMatrixTranspose(FinalWorldInverseTranspose);
 
 	//send shininess to constant buffer
 	_RenderContext.cbData->Shininess = Shininess;
